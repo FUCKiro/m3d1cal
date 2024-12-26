@@ -18,9 +18,9 @@ const profileSchema = z.object({
   phoneNumber: z.string().min(10, 'Inserisci un numero di telefono valido'),
   birthDate: z.string(),
   address: z.string().min(5, 'Inserisci un indirizzo valido'),
-  medicalNotes: z.string().optional(),
-  allergies: z.string().optional(),
-  medications: z.string().optional(),
+  medicalNotes: z.string().nullable().optional().transform(v => v || ''),
+  allergies: z.string().nullable().optional().transform(v => v || ''),
+  medications: z.string().nullable().optional().transform(v => v || ''),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -43,7 +43,7 @@ export default function ProfilePage() {
   }, [user, navigate]);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema)
+    resolver: zodResolver(profileSchema),
   });
 
   useEffect(() => {
@@ -55,7 +55,12 @@ export default function ProfilePage() {
           if (docSnap.exists()) {
             const data = docSnap.data();
             setUserData(data);
-            reset(data);
+            reset({
+              ...data,
+              medicalNotes: data.medicalNotes || '',
+              allergies: data.allergies || '',
+              medications: data.medications || ''
+            });
 
             // Carica gli appuntamenti
             const appointmentsRef = collection(db, 'appointments');
@@ -111,24 +116,51 @@ export default function ProfilePage() {
   const onSubmit = async (data: ProfileFormData) => {
     try {
       if (user) {
-        const userRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(userRef);
+        try {
+          const userRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(userRef);
+          
+          const dataToSave = {
+            ...(activeTab === 'profile' ? {
+              firstName: data.firstName,
+              lastName: data.lastName,
+              phoneNumber: data.phoneNumber,
+              birthDate: data.birthDate,
+              address: data.address
+            } : {}),
+            ...(activeTab === 'medical' ? {
+              medicalNotes: data.medicalNotes,
+              allergies: data.allergies,
+              medications: data.medications
+            } : {})
+          };
+
+          if (!docSnap.exists()) {
+            await setDoc(userRef, {
+              ...dataToSave,
+              email: user.email,
+              createdAt: new Date().toISOString()
+            });
+          } else {
+            await updateDoc(userRef, dataToSave);
+          }
         
-        if (!docSnap.exists()) {
-          // If document doesn't exist, create it
-          await setDoc(userRef, {
-            ...data,
-            email: user.email,
-            createdAt: new Date().toISOString()
-          });
-        } else {
-          // If document exists, update it
-          await updateDoc(userRef, data);
+          setUserData(prev => ({ ...prev, ...dataToSave }));
+          if (activeTab === 'profile') {
+            setIsEditing(false);
+          }
+          setError(null);
+
+          // Show success message
+          const successMessage = document.createElement('div');
+          successMessage.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+          successMessage.textContent = 'Dati salvati con successo';
+          document.body.appendChild(successMessage);
+          setTimeout(() => successMessage.remove(), 3000);
+        } catch (error) {
+          console.error('Errore durante il salvataggio:', error);
+          setError('Si è verificato un errore durante il salvataggio dei dati');
         }
-        
-        setUserData({ ...userData, ...data });
-        setIsEditing(false);
-        setError(null);
       }
     } catch (error) {
       console.error('Errore durante l\'aggiornamento del profilo:', error);
@@ -290,12 +322,16 @@ export default function ProfilePage() {
 
             {activeTab === 'medical' && (
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Storia Clinica</h2>
-                <div className="space-y-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Storia Clinica
+                  </h2>
+                </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Note Mediche</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Note Mediche</label>
                     <textarea
-                      {...register('medicalNotes')}
+                      {...register('medicalNotes')} 
                       rows={4}
                       placeholder="Inserisci eventuali note mediche..."
                       className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
@@ -303,25 +339,43 @@ export default function ProfilePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Allergie</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Allergie</label>
                     <textarea
                       {...register('allergies')}
-                      rows={2}
+                      rows={2} 
                       placeholder="Elenca eventuali allergie..."
                       className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Farmaci</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Farmaci</label>
                     <textarea
                       {...register('medications')}
-                      rows={2}
+                      rows={2} 
                       placeholder="Elenca i farmaci che assumi regolarmente..."
                       className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                     />
                   </div>
-                </div>
+
+                  {error && (
+                    <div className="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-md p-4">
+                      <div className="flex">
+                        <AlertCircle className="h-5 w-5 text-red-400" />
+                        <p className="ml-3 text-sm text-red-700 dark:text-red-200">{error}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      className="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 disabled:opacity-50"
+                    >
+                      Salva Modifiche
+                    </button>
+                  </div>
+                </form>
               </div>
             )}
 
@@ -361,8 +415,8 @@ export default function ProfilePage() {
 function ProfileField({ label, value }: { label: string; value?: string }) {
   return (
     <div>
-      <dt className="text-sm font-medium text-gray-500">{label}</dt>
-      <dd className="mt-1 text-sm text-gray-900">{value || '-'}</dd>
+      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</dt>
+      <dd className="mt-1 text-sm text-gray-900 dark:text-white">{value || '-'}</dd>
     </div>
   );
 }
