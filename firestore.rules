@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        );
+    }
+    
+    // Allow users to read and write their own data
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && (
+        request.auth.uid == userId || 
+        isAdmin()
+      );
+      allow update: if request.auth != null && (request.auth.uid == userId || isAdmin());
+    }
+    
+    // Allow authenticated users to manage their appointments
+    match /appointments/{appointmentId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && (
+        isAdmin() ||
+        resource.data.patientId == request.auth.uid || 
+        resource.data.doctorId == request.auth.uid
+      );
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        resource.data.patientId == request.auth.uid || 
+        resource.data.doctorId == request.auth.uid
+      );
+    }
+  }
+}
