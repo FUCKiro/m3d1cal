@@ -171,7 +171,7 @@ export default function Header() {
                 </Link>
               </>
             )}
-            <Link
+            <Link 
               to="/prenota"
               className="block px-3 py-2 text-base font-medium bg-rose-600 text-white hover:bg-rose-700 rounded-md"
               onClick={closeMenu}
