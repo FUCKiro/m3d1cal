@@ -121,12 +121,12 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Gestione Appuntamenti
               </h2>
               <div className="flex items-center space-x-4">
@@ -135,8 +135,8 @@ export default function AdminPage() {
                     onClick={() => setView('list')}
                     className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
                       view === 'list'
-                        ? 'bg-rose-600 text-white'
-                        : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                        ? 'bg-rose-600 text-white dark:bg-rose-700'
+                        : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
                     <List className="h-4 w-4 mr-2" />
@@ -146,8 +146,8 @@ export default function AdminPage() {
                     onClick={() => setView('calendar')}
                     className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
                       view === 'calendar'
-                        ? 'bg-rose-600 text-white'
-                        : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                        ? 'bg-rose-600 text-white dark:bg-rose-700'
+                        : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
                     <CalendarDays className="h-4 w-4 mr-2" />
@@ -158,7 +158,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-6 dark:text-gray-300">
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
                 <div className="flex">

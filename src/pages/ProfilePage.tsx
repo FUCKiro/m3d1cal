@@ -145,9 +145,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
           <div className="border-b border-gray-200">
             <nav className="-mb-px flex">
               <button
@@ -155,7 +155,7 @@ export default function ProfilePage() {
                 className={`${
                   activeTab === 'profile'
                     ? 'border-rose-500 text-rose-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
                 } flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm sm:text-base`}
               >
                 <User className="h-5 w-5 inline-block mr-2" />
@@ -166,7 +166,7 @@ export default function ProfilePage() {
                 className={`${
                   activeTab === 'medical'
                     ? 'border-rose-500 text-rose-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
                 } flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm sm:text-base`}
               >
                 <FileText className="h-5 w-5 inline-block mr-2" />
@@ -177,7 +177,7 @@ export default function ProfilePage() {
                 className={`${
                   activeTab === 'appointments'
                     ? 'border-rose-500 text-rose-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
                 } flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm sm:text-base`}
               >
                 <Calendar className="h-5 w-5 inline-block mr-2" />
@@ -190,7 +190,7 @@ export default function ProfilePage() {
             {activeTab === 'profile' && (
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">Dati Personali</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Dati Personali</h2>
                   <button
                     onClick={() => setIsEditing(!isEditing)}
                     className="text-sm text-rose-600 hover:text-rose-500"
@@ -203,11 +203,11 @@ export default function ProfilePage() {
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Nome</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
                         <input
                           {...register('firstName')}
                           type="text"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
+                          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                         />
                         {errors.firstName && (
                           <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
@@ -215,11 +215,11 @@ export default function ProfilePage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Cognome</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cognome</label>
                         <input
                           {...register('lastName')}
                           type="text"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
+                          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                         />
                         {errors.lastName && (
                           <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
@@ -227,11 +227,11 @@ export default function ProfilePage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Telefono</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Telefono</label>
                         <input
                           {...register('phoneNumber')}
                           type="tel"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
+                          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                         />
                         {errors.phoneNumber && (
                           <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>
@@ -239,11 +239,11 @@ export default function ProfilePage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Data di Nascita</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Data di Nascita</label>
                         <input
                           {...register('birthDate')}
                           type="date"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
+                          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                         />
                         {errors.birthDate && (
                           <p className="mt-1 text-sm text-red-600">{errors.birthDate.message}</p>
@@ -251,11 +251,11 @@ export default function ProfilePage() {
                       </div>
 
                       <div className="sm:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700">Indirizzo</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Indirizzo</label>
                         <input
                           {...register('address')}
                           type="text"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
+                          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                         />
                         {errors.address && (
                           <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>
@@ -273,7 +273,7 @@ export default function ProfilePage() {
                     </div>
                   </form>
                 ) : (
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 text-gray-900 dark:text-white">
                     <ProfileField label="Nome" value={userData?.firstName} />
                     <ProfileField label="Cognome" value={userData?.lastName} />
                     <ProfileField label="Email" value={user?.email} />
@@ -290,15 +290,15 @@ export default function ProfilePage() {
 
             {activeTab === 'medical' && (
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Storia Clinica</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Storia Clinica</h2>
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Note Mediche</label>
                     <textarea
                       {...register('medicalNotes')}
                       rows={4}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
                       placeholder="Inserisci eventuali note mediche..."
+                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                     />
                   </div>
 
@@ -307,8 +307,8 @@ export default function ProfilePage() {
                     <textarea
                       {...register('allergies')}
                       rows={2}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
                       placeholder="Elenca eventuali allergie..."
+                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                     />
                   </div>
 
@@ -317,8 +317,8 @@ export default function ProfilePage() {
                     <textarea
                       {...register('medications')}
                       rows={2}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500"
                       placeholder="Elenca i farmaci che assumi regolarmente..."
+                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-rose-500 focus:ring-rose-500"
                     />
                   </div>
                 </div>
@@ -327,28 +327,9 @@ export default function ProfilePage() {
 
             {activeTab === 'appointments' && (
               <div>
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    I Tuoi Appuntamenti
-                  </h2>
-                  <button
-                    onClick={() => {/* TODO: Implementare la prenotazione */}}
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-600 hover:bg-rose-700"
-                  >
-                    <Clock className="h-4 w-4 mr-2" />
-                    Prenota
-                  </button>
-                </div>
-                
-                {error && (
-                  <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
-                    <div className="flex">
-                      <AlertCircle className="h-5 w-5 text-red-400" />
-                      <p className="ml-3 text-sm text-red-700">{error}</p>
-                    </div>
-                  </div>
-                )}
-
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                  I Tuoi Appuntamenti
+                </h2>
                 {appointments.length === 0 ? (
                   <div className="text-center py-12">
                     <Calendar className="mx-auto h-12 w-12 text-gray-400" />
