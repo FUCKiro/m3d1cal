@@ -4,16 +4,16 @@ import { Calendar, Users, Clock, Phone, Star, Award, Shield, Activity } from 'lu
 
 export default function Hero() {
   return (
-    <div className="relative bg-gradient-to-b from-rose-50 to-white overflow-hidden">
+    <div className="relative bg-gradient-to-b from-rose-50 to-white dark:from-gray-800 dark:to-gray-900 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
           <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 lg:mt-16 lg:px-8 xl:mt-28">
             <div className="sm:text-center lg:text-left">
-              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
                 <span className="block">La Tua Salute è la</span>
                 <span className="block text-rose-600 animate-pulse">Nostra Priorità</span>
               </h1>
-              <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+              <p className="mt-3 text-base text-gray-500 dark:text-gray-300 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                 Accedi a cure mediche di alta qualità con il nostro team di specialisti. Prenota visite online, gestisci la tua cartella clinica e ricevi cure personalizzate, tutto in un unico posto.
               </p>
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
@@ -94,12 +94,12 @@ export default function Hero() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
       <div className="inline-flex items-center justify-center rounded-md bg-rose-50 p-3">
         {icon}
       </div>
-      <h3 className="mt-4 text-lg font-medium text-gray-900">{title}</h3>
-      <p className="mt-2 text-sm text-gray-500">{description}</p>
+      <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">{title}</h3>
+      <p className="mt-2 text-sm text-gray-500 dark:text-gray-300">{description}</p>
     </div>
   );
 }

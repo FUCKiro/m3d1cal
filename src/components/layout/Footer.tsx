@@ -4,24 +4,24 @@ import { Heart, Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-50 border-t border-gray-100">
+    <footer className="bg-gray-50 dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1">
             <div className="flex items-center">
               <Heart className="h-8 w-8 text-rose-600" />
-              <span className="ml-2 text-xl font-semibold text-gray-900">Centro Medico Plus</span>
+              <span className="ml-2 text-xl font-semibold text-gray-900 dark:text-white">Centro Medico Plus</span>
             </div>
-            <p className="mt-4 text-sm text-gray-500">
+            <p className="mt-4 text-sm text-gray-500 dark:text-gray-300">
               La tua salute è la nostra priorità. Offriamo servizi medici di alta qualità con un team di professionisti dedicati.
             </p>
           </div>
           
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">Servizi</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wider uppercase">Servizi</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/servizi" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/servizi" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Medicina Generale
                 </Link>
               </li>

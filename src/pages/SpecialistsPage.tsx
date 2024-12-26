@@ -24,13 +24,13 @@ export default function SpecialistsPage() {
   });
 
   return (
-    <div className="bg-gray-50 py-12">
+    <div className="bg-gray-50 dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
             I Nostri Specialisti
           </h2>
-          <p className="mt-4 text-xl text-gray-500">
+          <p className="mt-4 text-xl text-gray-500 dark:text-gray-300">
             Un team di professionisti altamente qualificati al tuo servizio
           </p>
         </div>

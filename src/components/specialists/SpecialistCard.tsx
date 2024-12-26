@@ -15,7 +15,7 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col">
       <div className="relative">
         <img
           src={specialist.imageUrl}
@@ -29,7 +29,7 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
         )}
       </div>
       
-      <h3 className="text-xl font-semibold text-gray-900">
+      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
         Dr. {specialist.firstName} {specialist.lastName}
       </h3>
       
@@ -37,7 +37,7 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
         {specialist.specialization}
       </p>
       
-      <div className="mt-2 text-sm text-gray-600">
+      <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
         <p>{specialist.description}</p>
       </div>
       
