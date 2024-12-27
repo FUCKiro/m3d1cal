@@ -26,17 +26,17 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/servizi" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/servizi" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Cardiologia
                 </Link>
               </li>
               <li>
-                <Link to="/servizi" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/servizi" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Neurologia
                 </Link>
               </li>
               <li>
-                <Link to="/servizi" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/servizi" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Ortopedia
                 </Link>
               </li>
@@ -44,30 +44,30 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">Link Utili</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wider uppercase">Link Utili</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/specialisti" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/specialisti" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   I Nostri Specialisti
                 </Link>
               </li>
               <li>
-                <Link to="/prenota" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/prenota" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Prenota Visita
                 </Link>
               </li>
               <li>
-                <Link to="/contatti" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/contatti" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Contattaci
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/privacy" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/termini" className="text-sm text-gray-500 hover:text-gray-900">
+                <Link to="/termini" className="text-sm text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                   Termini e Condizioni
                 </Link>
               </li>
@@ -75,17 +75,17 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">Contatti</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white tracking-wider uppercase">Contatti</h3>
             <ul className="mt-4 space-y-2">
-              <li className="flex items-center text-sm text-gray-500">
+              <li className="flex items-center text-sm text-gray-500 dark:text-gray-300">
                 <MapPin className="h-4 w-4 text-rose-600 mr-2" />
                 Via Roma 123, 00100 Roma
               </li>
-              <li className="flex items-center text-sm text-gray-500">
+              <li className="flex items-center text-sm text-gray-500 dark:text-gray-300">
                 <Phone className="h-4 w-4 text-rose-600 mr-2" />
                 +39 06 1234567
               </li>
-              <li className="flex items-center text-sm text-gray-500">
+              <li className="flex items-center text-sm text-gray-500 dark:text-gray-300">
                 <Mail className="h-4 w-4 text-rose-600 mr-2" />
                 info@centromedicoplus.it
               </li>
@@ -95,11 +95,11 @@ export default function Footer() {
 
         <div className="mt-8 pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-300">
               © {new Date().getFullYear()} Centro Medico Plus. Tutti i diritti riservati.
             </p>
             <div className="mt-4 md:mt-0">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-300">
                 Progetto grafico di{' '}
                 <a 
                   href="https://fabiolarocca.dev" 
