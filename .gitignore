@@ -48,3 +48,6 @@ lerna-debug.log*
 # Firebase
 .firebase/
 *.log
+.env
+.env.*
+!.env.example

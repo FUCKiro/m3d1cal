@@ -96,7 +96,7 @@ export default function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-500 dark:text-gray-300">
-              © {new Date().getFullYear()} Centro Medico Plus. Tutti i diritti riservati.
+              © 2025 Centro Medico Plus. Tutti i diritti riservati.
             </p>
             <div className="mt-4 md:mt-0">
               <p className="text-sm text-gray-500 dark:text-gray-300">
