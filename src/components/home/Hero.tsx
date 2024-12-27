@@ -18,7 +18,7 @@ export default function Hero() {
               </p>
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
-                  <Link to="/prenota" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-rose-600 hover:bg-rose-700 transform hover:scale-105 transition-all duration-200 md:py-4 md:text-lg md:px-10">
+                  <Link to="/specialisti" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-rose-600 hover:bg-rose-700 transform hover:scale-105 transition-all duration-200 md:py-4 md:text-lg md:px-10">
                     Prenota Ora
                   </Link>
                 </div>
