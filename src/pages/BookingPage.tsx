@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod'; 
+import { z } from 'zod';
 import { useAuth } from '../contexts/AuthContext';
 import { Calendar, AlertCircle } from 'lucide-react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+
+interface BookedTimeSlot {
+  date: string;
+  time: string;
+}
 
 const bookingSchema = z.object({
   date: z.string(),
@@ -19,9 +24,38 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 export default function BookingPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [bookedSlots, setBookedSlots] = useState<BookedTimeSlot[]>([]);
   const [error, setError] = useState<string>('');
   const { user } = useAuth();
   const { service, specialist } = location.state || {};
+
+  useEffect(() => {
+    const loadBookedSlots = async () => {
+      if (specialist?.id) {
+        const appointmentsRef = collection(db, 'appointments');
+        const q = query(
+          appointmentsRef,
+          where('doctorId', '==', specialist.id),
+          where('status', '==', 'scheduled')
+        );
+
+        const querySnapshot = await getDocs(q);
+        const slots = querySnapshot.docs.map(doc => ({
+          date: doc.data().date,
+          time: doc.data().time
+        }));
+        setBookedSlots(slots);
+      }
+    };
+
+    loadBookedSlots();
+  }, [specialist?.id]);
+
+  const isTimeSlotBooked = (date: string, time: string) => {
+    return bookedSlots.some(slot => 
+      slot.date === date && slot.time === time
+    );
+  };
 
   useEffect(() => {
     if (!user) {
@@ -34,7 +68,7 @@ export default function BookingPage() {
     }
   }, [service, specialist, navigate, user, location]);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<BookingFormData>({
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema)
   });
 
@@ -154,14 +188,15 @@ export default function BookingPage() {
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-base"
                 >
                   <option value="">Seleziona un orario</option>
-                  <option value="09:00">09:00</option>
-                  <option value="10:00">10:00</option>
-                  <option value="11:00">11:00</option>
-                  <option value="12:00">12:00</option>
-                  <option value="14:00">14:00</option>
-                  <option value="15:00">15:00</option>
-                  <option value="16:00">16:00</option>
-                  <option value="17:00">17:00</option>
+                  {['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'].map(time => (
+                    <option
+                      key={time}
+                      value={time}
+                      disabled={isTimeSlotBooked(watch('date'), time)}
+                    >
+                      {time} {isTimeSlotBooked(watch('date'), time) ? '(Non disponibile)' : ''}
+                    </option>
+                  ))}
                 </select>
                 {errors.time && (
                   <p className="mt-1 text-sm text-red-600">{errors.time.message}</p>

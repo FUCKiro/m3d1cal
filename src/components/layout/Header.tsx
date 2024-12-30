@@ -95,7 +95,7 @@ export default function Header() {
                 </Link>
               </>
             )}
-            <Link to="/prenota" className="bg-rose-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
+            <Link to="/specialisti" className="bg-rose-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
               Prenota Visita
             </Link>
           </div>
