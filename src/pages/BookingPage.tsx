@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Calendar, AlertCircle } from 'lucide-react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { scheduleReminder } from '../utils/sendReminder';
 
 interface BookedTimeSlot {
   date: string;
@@ -120,7 +121,11 @@ export default function BookingPage() {
         createdAt: new Date().toISOString()
       };
 
-      await addDoc(collection(db, 'appointments'), appointmentData);
+      const appointmentRef = await addDoc(collection(db, 'appointments'), appointmentData);
+      
+      // Schedule reminder
+      await scheduleReminder(appointmentRef.id);
+      
       navigate('/profilo');
     } catch (error) {
       console.error('Errore durante la prenotazione:', error);
