@@ -59,7 +59,7 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
             type="text"
             placeholder="Cerca per dottore o specializzazione..."
             placeholder="Cerca per paziente, dottore o specializzazione..."
-            className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-md focus:ring-rose-500 focus:border-rose-500 text-base sm:text-sm"
+            className="w-full px-4 py-3 sm:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-rose-500 focus:border-rose-500 text-base sm:text-sm bg-white dark:bg-gray-700 dark:text-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -69,7 +69,7 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="block w-full sm:w-48 pl-3 pr-10 py-3 sm:py-2 text-base sm:text-sm border border-gray-300 focus:outline-none focus:ring-rose-500 focus:border-rose-500 rounded-md bg-white"
+            className="block w-full sm:w-48 pl-3 pr-10 py-3 sm:py-2 text-base sm:text-sm border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-rose-500 focus:border-rose-500 rounded-md bg-white dark:bg-gray-700 dark:text-white"
           >
             <option value="all">Tutti gli stati</option>
             <option value="scheduled">Programmati</option>
@@ -83,7 +83,7 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
         {filteredAppointments.map((appointment) => (
           <div
             key={appointment.id}
-            className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex flex-col space-y-4">
               {/* Intestazione con stato e azioni */}
@@ -92,14 +92,14 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(appointment.status)}`}>
                     {getStatusText(appointment.status)}
                   </span>
-                  <span className="text-sm text-gray-500">
+                  <span className="hidden sm:inline-block text-sm text-gray-500 dark:text-gray-400">
                     ID: {appointment.id}
                   </span>
                 </div>
                 <select
                   value={appointment.status}
                   onChange={(e) => onStatusUpdate(appointment.id, e.target.value)}
-                  className="block w-full sm:w-40 pl-3 pr-10 py-3 sm:py-2 text-base sm:text-sm border border-gray-300 focus:outline-none focus:ring-rose-500 focus:border-rose-500 rounded-md bg-white shadow-sm"
+                  className="block w-32 sm:w-40 pl-2 sm:pl-3 pr-2 sm:pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-rose-500 focus:border-rose-500 rounded-md bg-white dark:bg-gray-700 dark:text-white shadow-sm"
                 >
                   <option value="scheduled">Programmato</option>
                   <option value="completed">Completato</option>
@@ -108,30 +108,30 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
               </div>
 
               {/* Informazioni paziente */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-3">Informazioni Paziente</h4>
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Informazioni Paziente</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500">Nome Completo</p>
-                    <p className="text-base font-medium text-gray-900">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Nome Completo</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">
                       {appointment.patient.firstName} {appointment.patient.lastName}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Codice Fiscale</p>
-                    <p className="text-base font-medium text-gray-900">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Codice Fiscale</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">
                       {appointment.patient.fiscalCode}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <p className="text-base font-medium text-gray-900">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">
                       {appointment.patient.email}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Telefono</p>
-                    <p className="text-base font-medium text-gray-900">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Telefono</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">
                       {appointment.patient.phoneNumber}
                     </p>
                   </div>
@@ -141,38 +141,38 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
               {/* Dettagli appuntamento */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <div className="flex items-center text-gray-500 mb-1">
+                  <div className="flex items-center text-gray-500 dark:text-gray-400 mb-1">
                     <Calendar className="h-4 w-4 mr-2" />
                     <span className="text-sm">Data</span>
                   </div>
-                  <p className="text-base font-medium text-gray-900">
+                  <p className="text-base font-medium text-gray-900 dark:text-white">
                     {format(new Date(appointment.date), 'EEEE d MMMM yyyy', { locale: it })}
                   </p>
                 </div>
                 <div>
-                  <div className="flex items-center text-gray-500 mb-1">
+                  <div className="flex items-center text-gray-500 dark:text-gray-400 mb-1">
                     <Clock className="h-4 w-4 mr-2" />
                     <span className="text-sm">Ora</span>
                   </div>
-                  <p className="text-base font-medium text-gray-900">
+                  <p className="text-base font-medium text-gray-900 dark:text-white">
                     {appointment.time}
                   </p>
                 </div>
                 <div>
-                  <div className="flex items-center text-gray-500 mb-1">
+                  <div className="flex items-center text-gray-500 dark:text-gray-400 mb-1">
                     <User className="h-4 w-4 mr-2" />
                     <span className="text-sm">Dottore</span>
                   </div>
-                  <p className="text-base font-medium text-gray-900">
+                  <p className="text-base font-medium text-gray-900 dark:text-white">
                     Dr. {appointment.doctorName}
                   </p>
                 </div>
                 <div>
-                  <div className="flex items-center text-gray-500 mb-1">
+                  <div className="flex items-center text-gray-500 dark:text-gray-400 mb-1">
                     <MapPin className="h-4 w-4 mr-2" />
                     <span className="text-sm">Ubicazione</span>
                   </div>
-                  <p className="text-base font-medium text-gray-900">
+                  <p className="text-base font-medium text-gray-900 dark:text-white">
                     {appointment.location}
                   </p>
                 </div>
@@ -180,9 +180,9 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
             </div>
 
             {appointment.notes && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Note</h4>
-                <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
+              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Note</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
                   {appointment.notes}
                 </p>
               </div>
@@ -193,8 +193,8 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
         {filteredAppointments.length === 0 && (
           <div className="text-center py-12">
             <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Nessun appuntamento trovato</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Nessun appuntamento trovato</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Non ci sono appuntamenti che corrispondono ai criteri di ricerca.
             </p>
           </div>

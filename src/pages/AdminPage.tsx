@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, getDocs, updateDoc, doc, getDoc, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import AdminAppointmentList from '../components/admin/AdminAppointmentList';
 import AdminCalendar from '../components/admin/AdminCalendar';
-import { CalendarDays, List, AlertCircle } from 'lucide-react';
+import { CalendarDays, List, AlertCircle, Users } from 'lucide-react';
 import type { AdminAppointment } from '../types';
+import type { User } from '../types';
+import AdminPatientList from '../components/admin/AdminPatientList';
 
 export default function AdminPage() {
-  const [view, setView] = useState<'list' | 'calendar'>('list');
+  const [view, setView] = useState<'list' | 'calendar' | 'patients'>('list');
   const [appointments, setAppointments] = useState<AdminAppointment[]>([]);
+  const [patients, setPatients] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
@@ -23,7 +26,28 @@ export default function AdminPage() {
     }
     
     loadAppointments();
+    loadPatients();
   }, [user, navigate]);
+
+  const loadPatients = async () => {
+    try {
+      const patientsSnapshot = await getDocs(
+        collection(db, 'users')
+      );
+      
+      const patientsData = patientsSnapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .filter(user => user.role === 'patient' || !user.role) as User[];
+      
+      setPatients(patientsData);
+    } catch (error) {
+      console.error('Errore nel caricamento dei pazienti:', error);
+      setError('Si è verificato un errore nel caricamento dei pazienti.');
+    }
+  };
 
   const loadAppointments = async () => {
     setError(null);
@@ -82,7 +106,7 @@ export default function AdminPage() {
       const sortedAppointments = appointmentsData.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.time}`);
         const dateB = new Date(`${b.date}T${b.time}`);
-        return dateB.getTime() - dateA.getTime();
+        return dateA.getTime() - dateB.getTime();
       });
       
       setAppointments(sortedAppointments);
@@ -132,6 +156,17 @@ export default function AdminPage() {
               <div className="flex items-center space-x-4">
                 <div className="flex space-x-2">
                   <button
+                    onClick={() => setView('patients')}
+                    className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
+                      view === 'patients'
+                        ? 'bg-rose-600 text-white dark:bg-rose-700'
+                        : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Pazienti
+                  </button>
+                  <button
                     onClick={() => setView('list')}
                     className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
                       view === 'list'
@@ -168,7 +203,9 @@ export default function AdminPage() {
               </div>
             )}
 
-            {view === 'list' ? (
+            {view === 'patients' ? (
+              <AdminPatientList patients={patients} />
+            ) : view === 'list' ? (
               <AdminAppointmentList
                 appointments={appointments}
                 onStatusUpdate={handleStatusUpdate}

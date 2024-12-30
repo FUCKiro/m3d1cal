@@ -47,21 +47,21 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           {format(currentDate, 'MMMM yyyy', { locale: it })}
         </h2>
         <div className="flex space-x-2">
           <button
             onClick={previousMonth}
-            className="p-2 rounded-md hover:bg-gray-100"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <ChevronLeft className="h-5 w-5 text-gray-600" />
+            <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </button>
           <button
             onClick={nextMonth}
-            className="p-2 rounded-md hover:bg-gray-100"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <ChevronRight className="h-5 w-5 text-gray-600" />
+            <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
         {['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map(day => (
           <div
             key={day}
-            className="text-center text-sm font-medium text-gray-700 py-2"
+            className="text-center text-sm font-medium text-gray-700 dark:text-gray-300 py-2"
           >
             {day}
           </div>
@@ -85,13 +85,13 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
           return (
             <div
               key={date.toString()}
-              className={`min-h-24 border rounded-lg p-2 ${
-                isSelected ? 'border-rose-500' : 'border-gray-200'
+              className={`min-h-24 border rounded-lg p-2 bg-white dark:bg-gray-800 ${
+                isSelected ? 'border-rose-500' : 'border-gray-200 dark:border-gray-700'
               }`}
               onClick={() => setSelectedDate(date)}
             >
               <div className="text-right">
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
                   {format(date, 'd')}
                 </span>
               </div>
@@ -112,31 +112,31 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
 
       {selectedDate && (
         <div className="mt-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
             Appuntamenti del {format(selectedDate, 'dd MMMM yyyy', { locale: it })}
           </h3>
           <div className="space-y-4">
             {getAppointmentsForDate(selectedDate).map(appointment => (
               <div
                 key={appointment.id}
-                className="border border-gray-200 rounded-lg p-4"
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-medium text-gray-900 mb-1">
+                    <p className="font-medium text-gray-900 dark:text-white mb-1">
                       {appointment.patient.firstName} {appointment.patient.lastName}
                     </p>
-                    <p className="text-xs text-gray-500 mb-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
                       {appointment.patient.email} • {appointment.patient.phoneNumber}
                     </p>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {appointment.time} - Dr. {appointment.doctorName}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {appointment.specialization}
                     </p>
                     {appointment.notes && (
-                      <p className="text-sm text-gray-500 mt-2">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                         Note: {appointment.notes}
                       </p>
                     )}
@@ -144,7 +144,7 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
                   <select
                     value={appointment.status}
                     onChange={(e) => onStatusUpdate(appointment.id, e.target.value)}
-                    className="block w-32 pl-3 pr-10 py-2 text-sm border border-gray-300 focus:outline-none focus:ring-rose-500 focus:border-rose-500 rounded-md"
+                    className="block w-32 pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-rose-500 focus:border-rose-500 rounded-md bg-white dark:bg-gray-700 dark:text-white"
                   >
                     <option value="scheduled">Programmato</option>
                     <option value="completed">Completato</option>
@@ -154,7 +154,7 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
               </div>
             ))}
             {getAppointmentsForDate(selectedDate).length === 0 && (
-              <p className="text-center text-gray-500">
+              <p className="text-center text-gray-500 dark:text-gray-400">
                 Nessun appuntamento per questa data
               </p>
             )}
