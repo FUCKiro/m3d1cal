@@ -1,27 +1,68 @@
-import React, { useState } from 'react';
-import { Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, AlertCircle } from 'lucide-react';
 import SpecialistCard from '../components/specialists/SpecialistCard';
-import { specialists } from '../data/specialists';
-import type { Specialist } from '../types';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import type { User } from '../types';
 
-const specializations = [...new Set(specialists.map(s => s.specialization))];
+interface Doctor extends User {
+  specialization: string;
+  description?: string;
+  yearsOfExperience?: number;
+  languages?: string[];
+  isAvailable?: boolean;
+}
 
 export default function SpecialistsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState<string>('');
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredSpecialists = specialists.filter(specialist => {
+  useEffect(() => {
+    const loadDoctors = async () => {
+      try {
+        const q = query(collection(db, 'users'), where('role', '==', 'doctor'));
+        const querySnapshot = await getDocs(q);
+        const doctorsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Doctor[];
+        setDoctors(doctorsData);
+      } catch (err) {
+        console.error('Error loading doctors:', err);
+        setError('Errore nel caricamento dei dottori');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDoctors();
+  }, []);
+
+  const specializations = [...new Set(doctors.map(d => d.specialization).filter(Boolean))];
+
+  const filteredDoctors = doctors.filter(doctor => {
     const matchesSearch = (
-      specialist.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      specialist.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      specialist.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+      doctor.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doctor.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doctor.specialization?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     
     const matchesSpecialization = !selectedSpecialization || 
-      specialist.specialization === selectedSpecialization;
+      doctor.specialization === selectedSpecialization;
 
     return matchesSearch && matchesSpecialization;
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 py-12">
@@ -61,13 +102,35 @@ export default function SpecialistsPage() {
           </select>
         </div>
 
+        {error && (
+          <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-4">
+            <div className="flex">
+              <AlertCircle className="h-5 w-5 text-red-400" />
+              <p className="ml-3 text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+        )}
+
         <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredSpecialists.map((specialist) => (
-            <SpecialistCard key={specialist.id} specialist={specialist} />
+          {filteredDoctors.map((doctor) => (
+            <SpecialistCard 
+              key={doctor.id} 
+              specialist={{
+                id: doctor.id,
+                firstName: doctor.firstName,
+                lastName: doctor.lastName,
+                specialization: doctor.specialization || 'Non specificata',
+                description: doctor.description || '',
+                imageUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=2070',
+                yearsOfExperience: doctor.yearsOfExperience || 0,
+                languages: doctor.languages || ['Italiano'],
+                isAvailable: doctor.isAvailable ?? true
+              }} 
+            />
           ))}
         </div>
 
-        {filteredSpecialists.length === 0 && (
+        {filteredDoctors.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">
               Nessuno specialista trovato con i criteri di ricerca specificati.

@@ -41,10 +41,12 @@ export default function BookingPage() {
           const scheduleSnap = await getDoc(scheduleRef);
           if (scheduleSnap.exists()) {
             setDoctorSchedule(scheduleSnap.data() as DoctorSchedule);
+          } else {
+            setError('Questo dottore non ha ancora configurato i suoi orari.');
           }
         } catch (error) {
           console.error('Error loading doctor schedule:', error);
-          setError('Errore nel caricamento degli orari disponibili');
+          setError('Non è stato possibile caricare gli orari disponibili. Riprova più tardi.');
         }
       }
     };
@@ -54,8 +56,12 @@ export default function BookingPage() {
 
   // Get available time slots for selected date
   const getAvailableTimeSlots = (date: string) => {
-    const dayOfWeek = new Date(date).toLocaleLowerCase().split(',')[0];
-    return doctorSchedule[dayOfWeek] || [];
+    if (!date) return [];
+    
+    const dayIndex = new Date(date).getDay();
+    const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][dayIndex];
+    
+    return doctorSchedule[dayName] || [];
   };
 
   useEffect(() => {
@@ -103,6 +109,17 @@ export default function BookingPage() {
 
   const onSubmit = async (data: BookingFormData) => {
     try {
+      if (!specialist?.id) {
+        setError('Dati dello specialista mancanti');
+        return;
+      }
+
+      const availableSlots = getAvailableTimeSlots(data.date);
+      if (!availableSlots.includes(data.time)) {
+        setError('Orario non disponibile per questa data');
+        return;
+      }
+
       // Check for existing appointments at the same time
       const appointmentsRef = collection(db, 'appointments');
       const existingAppointmentsQuery = query(
@@ -146,7 +163,7 @@ export default function BookingPage() {
         notes: data.notes || '',
         status: 'scheduled',
         location: 'Studio 1', // Puoi rendere questo dinamico se necessario
-        createdAt: new Date().toISOString()
+        createdAt: new Date()
       };
 
       const appointmentRef = await addDoc(collection(db, 'appointments'), appointmentData);
@@ -202,7 +219,7 @@ export default function BookingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-                  Data
+                  Data *
                 </label>
                 <input
                   type="date"
@@ -217,24 +234,30 @@ export default function BookingPage() {
 
               <div>
                 <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
-                  Orario
+                  Orario *
                 </label>
                 {watch('date') ? (
-                <select
-                  {...register('time')}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-base"
-                >
-                  <option value="">Seleziona un orario</option>
-                  {getAvailableTimeSlots(watch('date')).map(time => (
-                    <option
-                      key={time}
-                      value={time}
-                      disabled={isTimeSlotBooked(watch('date'), time)}
-                    >
-                      {time} {isTimeSlotBooked(watch('date'), time) ? '(Non disponibile)' : ''}
-                    </option>
-                  ))}
-                </select>
+                  <>
+                    {getAvailableTimeSlots(watch('date')).length > 0 ? (
+                      <select
+                        {...register('time')}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-base"
+                      >
+                        <option value="">Seleziona un orario</option>
+                        {getAvailableTimeSlots(watch('date')).map(time => (
+                          <option
+                            key={time}
+                            value={time}
+                            disabled={isTimeSlotBooked(watch('date'), time)}
+                          >
+                            {time} {isTimeSlotBooked(watch('date'), time) ? '(Non disponibile)' : ''}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="text-sm text-gray-500">Nessun orario disponibile per questa data</p>
+                    )}
+                  </>
                 ) : (
                   <p className="text-sm text-gray-500">Seleziona prima una data</p>
                 )}

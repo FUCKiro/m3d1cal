@@ -17,7 +17,8 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   const handleCreateDoctor = async () => {
     try {
       const doctorRef = doc(collection(db, 'users'));
-      const doctorData = {
+      // First create the user document
+      await setDoc(doctorRef, {
         firstName: specialist.firstName,
         lastName: specialist.lastName,
         email: `${specialist.firstName.toLowerCase()}.${specialist.lastName.toLowerCase()}@centromedicoplus.it`,
@@ -27,10 +28,19 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
         languages: specialist.languages || ['Italiano'],
         isAvailable: specialist.isAvailable,
         role: 'doctor',
-        createdAt: new Date().toISOString()
-      };
+        createdAt: new Date()
+      });
       
-      await setDoc(doctorRef, doctorData);
+      // Then create the doctor schedule document
+      const scheduleRef = doc(db, 'doctorSchedules', doctorRef.id);
+      await setDoc(scheduleRef, {
+        monday: [],
+        tuesday: [],
+        wednesday: [],
+        thursday: [],
+        friday: [],
+        saturday: []
+      });
 
       // Show success message
       const successMessage = document.createElement('div');
