@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { format } from 'date-fns';
+import { format, isToday, isTomorrow, isSameDay } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { Calendar, Clock, User, MapPin, Filter } from 'lucide-react';
 import type { AdminAppointment } from '../../types';
@@ -12,6 +12,19 @@ interface AdminAppointmentListProps {
 export default function AdminAppointmentList({ appointments, onStatusUpdate }: AdminAppointmentListProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Group appointments by date
+  const groupedAppointments = appointments.reduce((groups, appointment) => {
+    const date = appointment.date;
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(appointment);
+    return groups;
+  }, {} as { [key: string]: AdminAppointment[] });
+
+  // Sort dates
+  const sortedDates = Object.keys(groupedAppointments).sort();
 
   const filteredAppointments = appointments.filter(appointment => {
     const matchesStatus = statusFilter === 'all' || appointment.status === statusFilter;
@@ -79,12 +92,41 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
         </div>
       </div>
 
-      <div className="space-y-4">
-        {filteredAppointments.map((appointment) => (
-          <div
-            key={appointment.id}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
-          >
+      <div className="space-y-8">
+        {sortedDates.map(date => {
+          const dateAppointments = groupedAppointments[date].filter(appointment => {
+            const matchesStatus = statusFilter === 'all' || appointment.status === statusFilter;
+            const matchesSearch = 
+              appointment.patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              appointment.patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              appointment.patient.fiscalCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              appointment.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              appointment.specialization.toLowerCase().includes(searchTerm.toLowerCase());
+            
+            return matchesStatus && matchesSearch;
+          });
+
+          if (dateAppointments.length === 0) return null;
+
+          let dateLabel = format(new Date(date), 'EEEE d MMMM yyyy', { locale: it });
+          if (isToday(new Date(date))) {
+            dateLabel = `Oggi - ${dateLabel}`;
+          } else if (isTomorrow(new Date(date))) {
+            dateLabel = `Domani - ${dateLabel}`;
+          }
+
+          return (
+            <div key={date}>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <Calendar className="h-5 w-5 mr-2 text-rose-600" />
+                {dateLabel}
+              </h3>
+              <div className="space-y-4">
+                {dateAppointments.sort((a, b) => a.time.localeCompare(b.time)).map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
+                  >
             <div className="flex flex-col space-y-4">
               {/* Intestazione con stato e azioni */}
               <div className="flex justify-between items-center">
@@ -189,6 +231,10 @@ export default function AdminAppointmentList({ appointments, onStatusUpdate }: A
             )}
           </div>
         ))}
+              </div>
+            </div>
+          );
+        })}
 
         {filteredAppointments.length === 0 && (
           <div className="text-center py-12">

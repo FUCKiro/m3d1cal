@@ -5,9 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../contexts/AuthContext';
 import { Calendar, AlertCircle } from 'lucide-react';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { scheduleReminder } from '../utils/sendReminder';
+import type { DoctorSchedule } from '../types';
 
 interface BookedTimeSlot {
   date: string;
@@ -26,9 +27,36 @@ export default function BookingPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [bookedSlots, setBookedSlots] = useState<BookedTimeSlot[]>([]);
+  const [doctorSchedule, setDoctorSchedule] = useState<DoctorSchedule>({});
   const [error, setError] = useState<string>('');
   const { user } = useAuth();
   const { service, specialist } = location.state || {};
+
+  // Load doctor's schedule
+  useEffect(() => {
+    const loadDoctorSchedule = async () => {
+      if (specialist?.id) {
+        try {
+          const scheduleRef = doc(db, 'doctorSchedules', specialist.id);
+          const scheduleSnap = await getDoc(scheduleRef);
+          if (scheduleSnap.exists()) {
+            setDoctorSchedule(scheduleSnap.data() as DoctorSchedule);
+          }
+        } catch (error) {
+          console.error('Error loading doctor schedule:', error);
+          setError('Errore nel caricamento degli orari disponibili');
+        }
+      }
+    };
+
+    loadDoctorSchedule();
+  }, [specialist?.id]);
+
+  // Get available time slots for selected date
+  const getAvailableTimeSlots = (date: string) => {
+    const dayOfWeek = new Date(date).toLocaleLowerCase().split(',')[0];
+    return doctorSchedule[dayOfWeek] || [];
+  };
 
   useEffect(() => {
     const loadBookedSlots = async () => {
@@ -122,9 +150,12 @@ export default function BookingPage() {
       };
 
       const appointmentRef = await addDoc(collection(db, 'appointments'), appointmentData);
-      
-      // Schedule reminder
-      await scheduleReminder(appointmentRef.id);
+
+      // Try to schedule reminder but don't block booking if it fails
+      const reminderScheduled = await scheduleReminder(appointmentRef.id);
+      if (!reminderScheduled) {
+        console.warn('Reminder scheduling failed but appointment was created successfully');
+      }
       
       navigate('/profilo');
     } catch (error) {
@@ -188,12 +219,13 @@ export default function BookingPage() {
                 <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
                   Orario
                 </label>
+                {watch('date') ? (
                 <select
                   {...register('time')}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-base"
                 >
                   <option value="">Seleziona un orario</option>
-                  {['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'].map(time => (
+                  {getAvailableTimeSlots(watch('date')).map(time => (
                     <option
                       key={time}
                       value={time}
@@ -203,6 +235,9 @@ export default function BookingPage() {
                     </option>
                   ))}
                 </select>
+                ) : (
+                  <p className="text-sm text-gray-500">Seleziona prima una data</p>
+                )}
                 {errors.time && (
                   <p className="mt-1 text-sm text-red-600">{errors.time.message}</p>
                 )}

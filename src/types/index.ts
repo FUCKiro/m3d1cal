@@ -47,6 +47,18 @@ export interface Specialist {
   isAvailable: boolean;
 }
 
+export interface DoctorSchedule {
+  [key: string]: string[]; // e.g. monday: ['09:00', '09:30', etc]
+}
+
+export interface DoctorSchedule {
+  [key: string]: string[]; // monday: ['09:00', '09:30', etc]
+}
+
+export interface DoctorSchedule {
+  [key: string]: string[]; // monday: ['09:00', '09:30', etc]
+}
+
 export interface Service {
   id: string;
   icon: React.ComponentType<{ className?: string }>;

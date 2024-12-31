@@ -1,5 +1,75 @@
-import React from 'react';
-import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Phone, Mail, Clock, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+const faqs: FaqItem[] = [
+  {
+    question: "Come posso prenotare una visita?",
+    answer: "Puoi prenotare una visita direttamente online attraverso il nostro sistema di prenotazione, oppure chiamando il nostro numero di telefono durante gli orari di apertura."
+  },
+  {
+    question: "Quali documenti devo portare alla visita?",
+    answer: "È necessario portare un documento d'identità valido, la tessera sanitaria e eventuali esami o documentazione medica precedente pertinente alla visita."
+  },
+  {
+    question: "Come posso disdire o spostare un appuntamento?",
+    answer: "Puoi gestire i tuoi appuntamenti accedendo alla tua area personale sul sito, oppure contattandoci telefonicamente con almeno 24 ore di anticipo."
+  },
+  {
+    question: "Accettate pagamenti con carta?",
+    answer: "Sì, accettiamo pagamenti con tutte le principali carte di credito e debito, oltre a contanti e bonifici bancari."
+  },
+  {
+    question: "Come posso richiedere una copia della mia cartella clinica?",
+    answer: "Puoi richiedere la tua cartella clinica direttamente dalla tua area personale sul sito o facendone richiesta presso la nostra segreteria."
+  }
+];
+
+function FaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className="mt-12">
+      <div className="text-center mb-8">
+        <HelpCircle className="mx-auto h-12 w-12 text-rose-600" />
+        <h3 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
+          Domande Frequenti
+        </h3>
+      </div>
+      <div className="space-y-4">
+        {faqs.map((faq, index) => (
+          <div
+            key={index}
+            className="border border-gray-200 dark:border-gray-700 rounded-lg"
+          >
+            <button
+              className="w-full px-6 py-4 flex justify-between items-center text-left"
+              onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            >
+              <span className="font-medium text-gray-900 dark:text-white">
+                {faq.question}
+              </span>
+              {openIndex === index ? (
+                <ChevronUp className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              )}
+            </button>
+            {openIndex === index && (
+              <div className="px-6 pb-4">
+                <p className="text-gray-500 dark:text-gray-300">{faq.answer}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function ContactPage() {
   return (
@@ -93,6 +163,8 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
+
+        <FaqSection />
       </div>
     </div>
   );

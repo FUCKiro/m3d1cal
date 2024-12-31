@@ -4,14 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { collection, query, getDocs, updateDoc, doc, getDoc, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import AdminAppointmentList from '../components/admin/AdminAppointmentList';
+import AdminDashboard from '../components/admin/AdminDashboard';
 import AdminCalendar from '../components/admin/AdminCalendar';
-import { CalendarDays, List, AlertCircle, Users } from 'lucide-react';
+import { CalendarDays, List, AlertCircle, Users, LayoutDashboard, UserCog } from 'lucide-react';
 import type { AdminAppointment } from '../types';
 import type { User } from '../types';
 import AdminPatientList from '../components/admin/AdminPatientList';
+import DoctorManager from '../components/admin/DoctorManager';
 
 export default function AdminPage() {
-  const [view, setView] = useState<'list' | 'calendar' | 'patients'>('list');
+  const [view, setView] = useState<'dashboard' | 'list' | 'calendar' | 'patients' | 'doctors'>('dashboard');
   const [appointments, setAppointments] = useState<AdminAppointment[]>([]);
   const [patients, setPatients] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,6 +158,28 @@ export default function AdminPage() {
               <div className="flex items-center space-x-4 mt-4 sm:mt-0">
                 <div className="flex space-x-2">
                   <button
+                    onClick={() => setView('dashboard')}
+                    className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
+                      view === 'dashboard'
+                        ? 'bg-rose-600 text-white dark:bg-rose-700'
+                        : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={() => setView('doctors')}
+                    className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
+                      view === 'doctors'
+                        ? 'bg-rose-600 text-white dark:bg-rose-700'
+                        : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <UserCog className="h-4 w-4 mr-2" />
+                    Dottori
+                  </button>
+                  <button
                     onClick={() => setView('patients')}
                     className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
                       view === 'patients'
@@ -203,8 +227,12 @@ export default function AdminPage() {
               </div>
             )}
 
-            {view === 'patients' ? (
+            {view === 'dashboard' ? (
+              <AdminDashboard appointments={appointments} patients={patients} />
+            ) : view === 'patients' ? (
               <AdminPatientList patients={patients} />
+            ) : view === 'doctors' ? (
+              <DoctorManager />
             ) : view === 'list' ? (
               <AdminAppointmentList
                 appointments={appointments}

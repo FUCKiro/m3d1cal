@@ -1,6 +1,9 @@
 import React from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { doc, setDoc, collection } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import type { Specialist } from '../../types';
 
 interface SpecialistCardProps {
@@ -9,6 +12,41 @@ interface SpecialistCardProps {
 
 export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleCreateDoctor = async () => {
+    try {
+      const doctorRef = doc(collection(db, 'users'));
+      const doctorData = {
+        firstName: specialist.firstName,
+        lastName: specialist.lastName,
+        email: `${specialist.firstName.toLowerCase()}.${specialist.lastName.toLowerCase()}@centromedicoplus.it`,
+        specialization: specialist.specialization,
+        description: specialist.description,
+        yearsOfExperience: specialist.yearsOfExperience,
+        languages: specialist.languages || ['Italiano'],
+        isAvailable: specialist.isAvailable,
+        role: 'doctor',
+        createdAt: new Date().toISOString()
+      };
+      
+      await setDoc(doctorRef, doctorData);
+
+      // Show success message
+      const successMessage = document.createElement('div');
+      successMessage.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      successMessage.textContent = 'Dottore creato con successo';
+      document.body.appendChild(successMessage);
+      setTimeout(() => successMessage.remove(), 3000);
+    } catch (error) {
+      console.error('Error creating doctor:', error);
+      const errorMessage = document.createElement('div');
+      errorMessage.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      errorMessage.textContent = 'Errore durante la creazione del dottore';
+      document.body.appendChild(errorMessage);
+      setTimeout(() => errorMessage.remove(), 3000);
+    }
+  };
 
   const handleBooking = () => {
     navigate('/prenota', { state: { specialist } });
@@ -53,13 +91,25 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
       </div>
 
       <div className="mt-6 pt-4 border-t border-gray-100">
-        <button
-          className="w-full bg-rose-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 flex items-center justify-center"
-          onClick={handleBooking}
-        >
-          <Calendar className="w-4 h-4 mr-2" />
-          Prenota Visita
-        </button>
+        <div className="flex flex-col space-y-2">
+          <button
+            className="w-full bg-rose-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 flex items-center justify-center"
+            onClick={handleBooking}
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            Prenota Visita
+          </button>
+          
+          {user?.role === 'admin' && (
+            <button
+              onClick={handleCreateDoctor}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Crea Account Dottore
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

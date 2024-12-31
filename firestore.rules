@@ -3,10 +3,13 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Helper function to check if user is admin
     function isAdmin() {
+      return request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // Helper function to check if user is a doctor
+    function isDoctor() {
       return request.auth != null && 
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
-        );
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor';
     }
     
     // Allow users to read and write their own data
@@ -17,6 +20,13 @@ service cloud.firestore {
         isAdmin()
       );
       allow update: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Allow access to doctor schedules
+    match /doctorSchedules/{doctorId} {
+      allow read: if true; // Public read access for booking
+      allow write, delete: if isAdmin(); // Only admins can manage schedules
     }
     
     // Allow authenticated users to manage their appointments
@@ -32,6 +42,7 @@ service cloud.firestore {
         resource.data.patientId == request.auth.uid || 
         resource.data.doctorId == request.auth.uid
       );
+      allow delete: if isAdmin();
     }
   }
 }
