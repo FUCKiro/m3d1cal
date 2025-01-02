@@ -151,19 +151,19 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Gestione Appuntamenti
               </h2>
-              <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-                <div className="flex space-x-2">
+              <div className="flex items-center mt-4 sm:mt-0">
+                <div className="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
                   <button
                     onClick={() => setView('dashboard')}
                     className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
                       view === 'dashboard'
                         ? 'bg-rose-600 text-white dark:bg-rose-700'
                         : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    } px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center`}
                   >
                     <LayoutDashboard className="h-4 w-4 mr-2" />
                     Dashboard
@@ -174,7 +174,7 @@ export default function AdminPage() {
                       view === 'doctors'
                         ? 'bg-rose-600 text-white dark:bg-rose-700'
                         : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    } px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center`}
                   >
                     <UserCog className="h-4 w-4 mr-2" />
                     Dottori
@@ -185,7 +185,7 @@ export default function AdminPage() {
                       view === 'patients'
                         ? 'bg-rose-600 text-white dark:bg-rose-700'
                         : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    } px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center`}
                   >
                     <Users className="h-4 w-4 mr-2" />
                     Pazienti
@@ -196,7 +196,7 @@ export default function AdminPage() {
                       view === 'list'
                         ? 'bg-rose-600 text-white dark:bg-rose-700'
                         : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    } px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center`}
                   >
                     <List className="h-4 w-4 mr-2" />
                     Lista
@@ -207,7 +207,7 @@ export default function AdminPage() {
                       view === 'calendar'
                         ? 'bg-rose-600 text-white dark:bg-rose-700'
                         : 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    } px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center`}
                   >
                     <CalendarDays className="h-4 w-4 mr-2" />
                     Calendario

@@ -50,20 +50,20 @@ export default function DoctorSchedule({ doctorId, schedule, onSave }: DoctorSch
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white">
             Gestione Orari
           </h3>
           <button
             onClick={handleSave}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-600 hover:bg-rose-700"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-600 hover:bg-rose-700"
           >
             <Save className="h-4 w-4 mr-2" />
             Salva Modifiche
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Lista giorni */}
           <div className="space-y-4">
             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -97,7 +97,7 @@ export default function DoctorSchedule({ doctorId, schedule, onSave }: DoctorSch
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                 Slot Orari - {weekDays.find(d => d.id === selectedDay)?.label}
               </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-2">
                 {timeSlots.map(time => {
                   const isSelected = editedSchedule[selectedDay]?.includes(time);
                   return (
