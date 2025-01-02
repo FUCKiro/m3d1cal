@@ -29,8 +29,14 @@ export default function BookingPage() {
   const [bookedSlots, setBookedSlots] = useState<BookedTimeSlot[]>([]);
   const [doctorSchedule, setDoctorSchedule] = useState<DoctorSchedule>({});
   const [error, setError] = useState<string>('');
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const { user } = useAuth();
   const { service, specialist } = location.state || {};
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingFormData>({
+    resolver: zodResolver(bookingSchema)
+  });
+
+  const selectedDate = watch('date');
 
   // Load doctor's schedule
   useEffect(() => {
@@ -54,6 +60,34 @@ export default function BookingPage() {
     loadDoctorSchedule();
   }, [specialist?.id]);
 
+  // Load booked slots when date changes
+  const loadBookedSlots = async (date: string) => {
+    if (!specialist?.id) return;
+    
+    setLoadingSlots(true);
+    try {
+      const appointmentsRef = collection(db, 'appointments');
+      const q = query(
+        appointmentsRef,
+        where('doctorId', '==', specialist.id),
+        where('date', '==', date),
+        where('status', '==', 'scheduled')
+      );
+
+      const querySnapshot = await getDocs(q);
+      const slots = querySnapshot.docs.map(doc => ({
+        date: doc.data().date,
+        time: doc.data().time
+      }));
+      setBookedSlots(slots);
+    } catch (error) {
+      console.error('Error loading booked slots:', error);
+      setError('Errore nel caricamento degli orari disponibili');
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
   // Get available time slots for selected date
   const getAvailableTimeSlots = (date: string) => {
     if (!date) return [];
@@ -63,28 +97,6 @@ export default function BookingPage() {
     
     return doctorSchedule[dayName] || [];
   };
-
-  useEffect(() => {
-    const loadBookedSlots = async () => {
-      if (specialist?.id) {
-        const appointmentsRef = collection(db, 'appointments');
-        const q = query(
-          appointmentsRef,
-          where('doctorId', '==', specialist.id),
-          where('status', '==', 'scheduled')
-        );
-
-        const querySnapshot = await getDocs(q);
-        const slots = querySnapshot.docs.map(doc => ({
-          date: doc.data().date,
-          time: doc.data().time
-        }));
-        setBookedSlots(slots);
-      }
-    };
-
-    loadBookedSlots();
-  }, [specialist?.id]);
 
   const isTimeSlotBooked = (date: string, time: string) => {
     return bookedSlots.some(slot => 
@@ -103,9 +115,12 @@ export default function BookingPage() {
     }
   }, [service, specialist, navigate, user, location]);
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingFormData>({
-    resolver: zodResolver(bookingSchema)
-  });
+  // Load booked slots when date changes
+  useEffect(() => {
+    if (selectedDate) {
+      loadBookedSlots(selectedDate);
+    }
+  }, [selectedDate]);
 
   const onSubmit = async (data: BookingFormData) => {
     try {
@@ -236,23 +251,30 @@ export default function BookingPage() {
                 <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
                   Orario *
                 </label>
-                {watch('date') ? (
+                {loadingSlots ? (
+                  <div className="flex items-center justify-center py-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-rose-600"></div>
+                  </div>
+                ) : selectedDate ? (
                   <>
-                    {getAvailableTimeSlots(watch('date')).length > 0 ? (
+                    {getAvailableTimeSlots(selectedDate).length > 0 ? (
                       <select
                         {...register('time')}
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-base"
                       >
                         <option value="">Seleziona un orario</option>
-                        {getAvailableTimeSlots(watch('date')).map(time => (
+                        {getAvailableTimeSlots(selectedDate).map(time => {
+                          const isBooked = isTimeSlotBooked(selectedDate, time);
+                          return (
                           <option
                             key={time}
                             value={time}
-                            disabled={isTimeSlotBooked(watch('date'), time)}
+                            disabled={isBooked}
                           >
-                            {time} {isTimeSlotBooked(watch('date'), time) ? '(Non disponibile)' : ''}
+                            {time} {isBooked ? '(Non disponibile)' : ''}
                           </option>
-                        ))}
+                          );
+                        })}
                       </select>
                     ) : (
                       <p className="text-sm text-gray-500">Nessun orario disponibile per questa data</p>
