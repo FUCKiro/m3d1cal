@@ -3,14 +3,31 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, writeBatch } from 'firebase/firestore';
 import { getFunctions } from 'firebase/functions';
 
+// Verifica che tutte le variabili d'ambiente necessarie siano presenti
+const requiredEnvVars = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_AUTH_DOMAIN',
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_STORAGE_BUCKET',
+  'VITE_FIREBASE_MESSAGING_SENDER_ID',
+  'VITE_FIREBASE_APP_ID',
+  'VITE_FIREBASE_MEASUREMENT_ID'
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!import.meta.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBOuR5zzZj4_z4-sUoJeQ0u83tMIxZAAWM",
-  authDomain: "healtcare-1c5b7.firebaseapp.com",
-  projectId: "healtcare-1c5b7",
-  storageBucket: "healtcare-1c5b7.firebasestorage.app",
-  messagingSenderId: "212717178377",
-  appId: "1:212717178377:web:064c97050d10fb043032d8",
-  measurementId: "G-R78L6VJM4M"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
