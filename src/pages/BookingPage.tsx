@@ -29,6 +29,7 @@ export default function BookingPage() {
   const [bookedSlots, setBookedSlots] = useState<BookedTimeSlot[]>([]);
   const [doctorSchedule, setDoctorSchedule] = useState<DoctorSchedule>({});
   const [error, setError] = useState<string>('');
+  const [isDoctorAvailable, setIsDoctorAvailable] = useState<boolean>(true);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const { user } = useAuth();
   const { service, specialist } = location.state || {};
@@ -43,12 +44,30 @@ export default function BookingPage() {
     const loadDoctorSchedule = async () => {
       if (specialist?.id) {
         try {
-          const scheduleRef = doc(db, 'doctorSchedules', specialist.id);
-          const scheduleSnap = await getDoc(scheduleRef);
-          if (scheduleSnap.exists()) {
-            setDoctorSchedule(scheduleSnap.data() as DoctorSchedule);
+          // First check if doctor is available
+          const doctorRef = doc(db, 'users', specialist.id);
+          const doctorSnap = await getDoc(doctorRef);
+          
+          if (doctorSnap.exists()) {
+            const doctorData = doctorSnap.data();
+            setIsDoctorAvailable(doctorData.isAvailable ?? true);
+            
+            if (doctorData.isAvailable === false) {
+              setError('Questo dottore non è al momento disponibile per nuove prenotazioni.');
+              return;
+            }
+            
+            // If doctor is available, load their schedule
+            const scheduleRef = doc(db, 'doctorSchedules', specialist.id);
+            const scheduleSnap = await getDoc(scheduleRef);
+            if (scheduleSnap.exists()) {
+              setDoctorSchedule(scheduleSnap.data() as DoctorSchedule);
+            } else {
+              setError('Questo dottore non ha ancora configurato i suoi orari.');
+            }
           } else {
-            setError('Questo dottore non ha ancora configurato i suoi orari.');
+            setError('Dottore non trovato.');
+            setIsDoctorAvailable(false);
           }
         } catch (error) {
           console.error('Error loading doctor schedule:', error);
@@ -230,6 +249,19 @@ export default function BookingPage() {
             </div>
           )}
 
+          {!isDoctorAvailable ? (
+            <div className="text-center py-8">
+              <p className="text-lg text-gray-700 dark:text-gray-300">
+                Questo dottore non è al momento disponibile per nuove prenotazioni.
+              </p>
+              <button
+                onClick={() => navigate('/specialisti')}
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-600 hover:bg-rose-700"
+              >
+                Torna alla lista degli specialisti
+              </button>
+            </div>
+          ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
@@ -308,6 +340,7 @@ export default function BookingPage() {
               Conferma Prenotazione
             </button>
           </form>
+          )}
         </div>
       </div>
     </div>
