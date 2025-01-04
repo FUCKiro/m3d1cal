@@ -1,19 +1,13 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-import { format, addHours } from 'date-fns';
+import { Resend } from 'resend';
+import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 
 admin.initializeApp();
 
-// Initialize SES client
-const sesClient = new SESClient({
-  region: functions.config().aws.region,
-  credentials: {
-    accessKeyId: functions.config().aws.access_key_id,
-    secretAccessKey: functions.config().aws.secret_access_key
-  }
-});
+// Initialize Resend
+const resend = new Resend(functions.config().resend.key);
 
 export const scheduleAppointmentReminder = functions.https.onCall(async (data, context) => {
   const { appointmentId } = data;
@@ -57,7 +51,6 @@ export const scheduleAppointmentReminder = functions.https.onCall(async (data, c
     console.error('Error scheduling reminder:', error);
     throw new functions.https.HttpsError('internal', 'Error scheduling reminder');
   }
-  
 });
 
 export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours').onRun(async (context) => {
@@ -80,49 +73,34 @@ export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours
     }
 
     const appointmentData = appointment.data()!;
+    const userRef = admin.firestore().collection('users').doc(appointmentData.patientId);
     const user = await userRef.get();
 
     if (!user.exists) return;
 
     const userData = user.data()!;
 
-    const emailHtml = `
-        <h2>Promemoria Appuntamento</h2>
-        <p>Gentile ${userData.firstName} ${userData.lastName},</p>
-        <p>Le ricordiamo che ha un appuntamento programmato per domani:</p>
-        <ul>
-          <li>Data: ${format(new Date(appointmentData.date), 'EEEE d MMMM yyyy', { locale: it })}</li>
-          <li>Ora: ${appointmentData.time}</li>
-          <li>Dottore: Dr. ${appointmentData.doctorName}</li>
-          <li>Specializzazione: ${appointmentData.specialization}</li>
-          <li>Ubicazione: ${appointmentData.location}</li>
-        </ul>
-        <p>In caso di impossibilità a presentarsi, la preghiamo di cancellare l'appuntamento con almeno 24 ore di anticipo.</p>
-        <p>Cordiali saluti,<br>Centro Medico Plus</p>
-      `
-    };
-
-    const command = new SendEmailCommand({
-      Destination: {
-        ToAddresses: [userData.email]
-      },
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: emailHtml
-          }
-        },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: 'Promemoria Appuntamento - Centro Medico Plus'
-        }
-      },
-      Source: 'noreply@centromedicoplus.it'
-    });
-
     try {
-      await sesClient.send(command);
+      await resend.emails.send({
+        from: 'noreply@centromedicoplus.it',
+        to: userData.email,
+        subject: 'Promemoria Appuntamento - Centro Medico Plus',
+        html: `
+          <h2>Promemoria Appuntamento</h2>
+          <p>Gentile ${userData.firstName} ${userData.lastName},</p>
+          <p>Le ricordiamo che ha un appuntamento programmato per domani:</p>
+          <ul>
+            <li>Data: ${format(new Date(appointmentData.date), 'EEEE d MMMM yyyy', { locale: it })}</li>
+            <li>Ora: ${appointmentData.time}</li>
+            <li>Dottore: Dr. ${appointmentData.doctorName}</li>
+            <li>Specializzazione: ${appointmentData.specialization}</li>
+            <li>Ubicazione: ${appointmentData.location}</li>
+          </ul>
+          <p>In caso di impossibilità a presentarsi, la preghiamo di cancellare l'appuntamento con almeno 24 ore di anticipo.</p>
+          <p>Cordiali saluti,<br>Centro Medico Plus</p>
+        `
+      });
+
       console.log(`Reminder email sent successfully to ${userData.email} for appointment ${reminder.appointmentId}`);
       await doc.ref.update({ sent: true });
     } catch (error) {

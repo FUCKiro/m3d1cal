@@ -34,15 +34,6 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
 
 ### Email e Notifiche
 - **Resend** - Servizio di invio email
-- **AWS SES** - Backup sistema email
-- **SendGrid** - Sistema di template email
-
-### Infrastruttura
-- **Supabase** - Database PostgreSQL
-  - Row Level Security (RLS)
-  - Realtime subscriptions
-  - Stored procedures
-  - Migrations
 
 ### CI/CD e Tooling
 - **ESLint** - Linting
@@ -57,7 +48,6 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
 - npm o yarn
 - Account Firebase
 - Account Resend (per email)
-- Account Supabase
 
 ## ⚙️ Configurazione
 
@@ -80,8 +70,6 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
    Richieste le seguenti variabili:
    - `VITE_FIREBASE_CONFIG` - Configurazione Firebase
    - `VITE_RESEND_API_KEY` - API key Resend
-   - `VITE_SUPABASE_URL` - URL Supabase
-   - `VITE_SUPABASE_ANON_KEY` - Chiave anonima Supabase
 
 4. Avvia il server di sviluppo:
    ```bash
@@ -91,7 +79,6 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
 ## 🔒 Sicurezza
 
 - Autenticazione utenti con email verification
-- Row Level Security (RLS) su Supabase
 - Regole di sicurezza Firestore
 - Protezione delle rotte sensibili
 - Sanitizzazione input utente
@@ -100,27 +87,20 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
 
 ## 📧 Sistema Email
 
-Il sistema utilizza una configurazione multi-provider per massima affidabilità:
-1. **Resend** - Provider principale
-2. **AWS SES** - Fallback automatico
-3. **SendGrid** - Template email
+Il sistema utilizza Resend come provider di email:
+- Notifiche automatiche per appuntamenti
+- Email di verifica account
+- Recupero password
+- Template HTML personalizzati
 
 ## 🗄️ Database
-
-### Supabase (PostgreSQL)
-- Tabelle principali:
-  - users
-  - doctors
-  - appointments
-  - doctor_schedules
-- Migrations automatizzate
-- Backup giornalieri
-- Indici ottimizzati
 
 ### Firestore
 - Dati real-time
 - Cache offline
 - Sincronizzazione automatica
+- Backup automatici
+- Indici ottimizzati
 
 ## 📝 Licenza
 
