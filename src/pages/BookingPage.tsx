@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Calendar, AlertCircle } from 'lucide-react';
 import { collection, addDoc, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { scheduleReminder } from '../utils/sendReminder';
+import { sendAppointmentReminder } from '../utils/emailService';
 import type { DoctorSchedule } from '../types';
 
 interface BookedTimeSlot {
@@ -202,10 +202,21 @@ export default function BookingPage() {
 
       const appointmentRef = await addDoc(collection(db, 'appointments'), appointmentData);
 
-      // Try to schedule reminder but don't block booking if it fails
-      const reminderScheduled = await scheduleReminder(appointmentRef.id);
-      if (!reminderScheduled) {
-        console.warn('Reminder scheduling failed but appointment was created successfully');
+      // Schedule email reminder
+      try {
+        const reminderScheduled = await sendAppointmentReminder(
+          { ...appointmentData, id: appointmentRef.id },
+          user
+        );
+      
+        if (!reminderScheduled) {
+          console.warn('Reminder scheduling failed but appointment was created successfully');
+        } else {
+          console.log('Reminder scheduled successfully');
+        }
+      } catch (error) {
+        console.error('Error scheduling reminder:', error);
+        // Don't block booking if reminder fails
       }
       
       navigate('/profilo');

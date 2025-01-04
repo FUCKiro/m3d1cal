@@ -1,16 +1,17 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import * as nodemailer from 'nodemailer';
-import { format } from 'date-fns';
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { format, addHours } from 'date-fns';
 import { it } from 'date-fns/locale';
 
 admin.initializeApp();
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: functions.config().email.user,
-    pass: functions.config().email.pass
+// Initialize SES client
+const sesClient = new SESClient({
+  region: functions.config().aws.region,
+  credentials: {
+    accessKeyId: functions.config().aws.access_key_id,
+    secretAccessKey: functions.config().aws.secret_access_key
   }
 });
 
@@ -26,7 +27,7 @@ export const scheduleAppointmentReminder = functions.https.onCall(async (data, c
     const appointment = await appointmentRef.get();
     
     if (!appointment.exists) {
-      throw new functions.https.HttpsError('not-found', 'Appointment not found');
+      throw new functions.https.HttpsError('not-found', `Appointment ${appointmentId} not found`);
     }
 
     const appointmentData = appointment.data()!;
@@ -34,7 +35,7 @@ export const scheduleAppointmentReminder = functions.https.onCall(async (data, c
     const user = await userRef.get();
     
     if (!user.exists) {
-      throw new functions.https.HttpsError('not-found', 'User not found');
+      throw new functions.https.HttpsError('not-found', `User ${appointmentData.patientId} not found`);
     }
 
     const userData = user.data()!;
@@ -42,7 +43,7 @@ export const scheduleAppointmentReminder = functions.https.onCall(async (data, c
     // Schedule the reminder for 24 hours before the appointment
     const appointmentDate = new Date(`${appointmentData.date}T${appointmentData.time}`);
     const reminderDate = new Date(appointmentDate.getTime() - 24 * 60 * 60 * 1000);
-
+    
     // Create a scheduled task
     await admin.firestore().collection('reminders').add({
       appointmentId,
@@ -50,11 +51,13 @@ export const scheduleAppointmentReminder = functions.https.onCall(async (data, c
       sent: false
     });
 
+    console.log(`Reminder scheduled for appointment ${appointmentId} at ${reminderDate.toISOString()}`);
     return { success: true };
   } catch (error) {
     console.error('Error scheduling reminder:', error);
     throw new functions.https.HttpsError('internal', 'Error scheduling reminder');
   }
+  
 });
 
 export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours').onRun(async (context) => {
@@ -62,7 +65,7 @@ export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours
   const remindersRef = admin.firestore().collection('reminders');
   
   const pendingReminders = await remindersRef
-    .where('sent', '==', false)
+    .where('sent', '==', false) 
     .where('scheduledFor', '<=', now)
     .get();
 
@@ -71,22 +74,19 @@ export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours
     const appointmentRef = admin.firestore().collection('appointments').doc(reminder.appointmentId);
     const appointment = await appointmentRef.get();
 
-    if (!appointment.exists) return;
+    if (!appointment.exists) {
+      console.warn(`Appointment ${reminder.appointmentId} not found for reminder ${doc.id}`);
+      return;
+    }
 
     const appointmentData = appointment.data()!;
-    const userRef = admin.firestore().collection('users').doc(appointmentData.patientId);
     const user = await userRef.get();
 
     if (!user.exists) return;
 
     const userData = user.data()!;
 
-    // Send email reminder
-    const mailOptions = {
-      from: '"Centro Medico Plus" <noreply@centromedicoplus.it>',
-      to: userData.email,
-      subject: 'Promemoria Appuntamento - Centro Medico Plus',
-      html: `
+    const emailHtml = `
         <h2>Promemoria Appuntamento</h2>
         <p>Gentile ${userData.firstName} ${userData.lastName},</p>
         <p>Le ricordiamo che ha un appuntamento programmato per domani:</p>
@@ -102,13 +102,34 @@ export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours
       `
     };
 
+    const command = new SendEmailCommand({
+      Destination: {
+        ToAddresses: [userData.email]
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: emailHtml
+          }
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: 'Promemoria Appuntamento - Centro Medico Plus'
+        }
+      },
+      Source: 'noreply@centromedicoplus.it'
+    });
+
     try {
-      await transporter.sendMail(mailOptions);
+      await sesClient.send(command);
+      console.log(`Reminder email sent successfully to ${userData.email} for appointment ${reminder.appointmentId}`);
       await doc.ref.update({ sent: true });
     } catch (error) {
       console.error('Error sending reminder email:', error);
     }
   });
 
+  console.log(`Processed ${reminderPromises.length} reminders`);
   await Promise.all(reminderPromises);
 });

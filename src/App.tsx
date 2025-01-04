@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Header from './components/layout/Header';
+import ConnectionStatus from './components/layout/ConnectionStatus';
 import Footer from './components/layout/Footer';
 import SpecialistsPage from './pages/SpecialistsPage';
 import Hero from './components/home/Hero';
@@ -44,6 +45,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
+          <ConnectionStatus />
         </div>
         </Router>
       </AuthProvider>
