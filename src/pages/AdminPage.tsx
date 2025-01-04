@@ -8,6 +8,7 @@ import AdminDashboard from '../components/admin/AdminDashboard';
 import AdminCalendar from '../components/admin/AdminCalendar';
 import { CalendarDays, List, AlertCircle, Users, LayoutDashboard, UserCog } from 'lucide-react';
 import type { AdminAppointment } from '../types';
+import ExportStats from '../components/admin/ExportStats';
 import type { User } from '../types';
 import AdminPatientList from '../components/admin/AdminPatientList';
 import DoctorManager from '../components/admin/DoctorManager';
@@ -228,7 +229,12 @@ export default function AdminPage() {
             )}
 
             {view === 'dashboard' ? (
-              <AdminDashboard appointments={appointments} patients={patients} />
+              <>
+                <AdminDashboard appointments={appointments} patients={patients} />
+                <div className="mt-8">
+                  <ExportStats appointments={appointments} />
+                </div>
+              </>
             ) : view === 'patients' ? (
               <AdminPatientList patients={patients} />
             ) : view === 'doctors' ? (
