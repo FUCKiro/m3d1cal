@@ -26,13 +26,13 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 export default function BookingPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { service, specialist, adminBooking, patient } = location.state || {};
   const [bookedSlots, setBookedSlots] = useState<BookedTimeSlot[]>([]);
   const [doctorSchedule, setDoctorSchedule] = useState<DoctorSchedule>({});
   const [error, setError] = useState<string>('');
   const [isDoctorAvailable, setIsDoctorAvailable] = useState<boolean>(true);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const { user } = useAuth();
-  const { service, specialist } = location.state || {};
   const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema)
   });
@@ -188,7 +188,7 @@ export default function BookingPage() {
       }
 
       const appointmentData = {
-        patientId: user.uid,
+        patientId: adminBooking ? patient.id : user.uid,
         doctorId: specialist?.id || '',
         doctorName: specialist ? `${specialist.firstName} ${specialist.lastName}` : '',
         specialization: specialist?.specialization || service?.title || '',
@@ -205,8 +205,8 @@ export default function BookingPage() {
       // Schedule email reminder
       try {
         const reminderScheduled = await sendAppointmentReminder(
-          { ...appointmentData, id: appointmentRef.id },
-          user
+          { ...appointmentData, id: appointmentRef.id }, 
+          adminBooking ? patient : user
         );
       
         if (!reminderScheduled) {
@@ -219,7 +219,11 @@ export default function BookingPage() {
         // Don't block booking if reminder fails
       }
       
-      navigate('/profilo');
+      if (adminBooking) {
+        navigate('/admin');
+      } else {
+        navigate('/profilo');
+      }
     } catch (error) {
       console.error('Errore durante la prenotazione:', error);
       setError('Si è verificato un errore durante la prenotazione. Riprova più tardi.');
@@ -237,7 +241,7 @@ export default function BookingPage() {
           <div className="text-center mb-8">
             <Calendar className="mx-auto h-12 w-12 text-rose-600" />
             <h2 className="mt-4 text-2xl sm:text-3xl font-extrabold text-gray-900">
-              Prenota Appuntamento
+              {adminBooking ? `Prenota Appuntamento per ${patient.firstName} ${patient.lastName}` : 'Prenota Appuntamento'}
             </h2>
             {service && (
               <p className="mt-2 text-base sm:text-lg text-gray-600">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Calendar, UserPlus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { doc, setDoc, collection } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
@@ -12,7 +12,9 @@ interface SpecialistCardProps {
 
 export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+  const { adminBooking, patient } = location.state || {};
 
   const handleCreateDoctor = async () => {
     try {
@@ -59,7 +61,13 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   };
 
   const handleBooking = () => {
-    navigate('/prenota', { state: { specialist } });
+    navigate('/prenota', { 
+      state: { 
+        specialist,
+        adminBooking,
+        patient
+      } 
+    });
   };
 
   return (

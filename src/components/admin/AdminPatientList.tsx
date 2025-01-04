@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Search, Mail, Phone, Calendar } from 'lucide-react';
+import { Search, Mail, Phone, Calendar, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 import type { User } from '../../types';
@@ -10,6 +11,16 @@ interface AdminPatientListProps {
 
 export default function AdminPatientList({ patients }: AdminPatientListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+  const handleBooking = (patient: User) => {
+    navigate('/specialisti', { 
+      state: { 
+        adminBooking: true,
+        patient: patient 
+      }
+    });
+  };
 
   const filteredPatients = patients.filter(patient => {
     const searchString = searchTerm.toLowerCase();
@@ -94,6 +105,15 @@ export default function AdminPatientList({ patients }: AdminPatientListProps) {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {patient.createdAt ? format(new Date(patient.createdAt), 'd MMMM yyyy', { locale: it }) : '-'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <button
+                    onClick={() => handleBooking(patient)}
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-rose-600 hover:bg-rose-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Scegli Specialista
+                  </button>
                 </td>
               </tr>
             ))}
