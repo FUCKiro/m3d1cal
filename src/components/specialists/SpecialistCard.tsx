@@ -61,6 +61,16 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   };
 
   const handleBooking = () => {
+    if (!adminBooking && !user) {
+      navigate('/login', { 
+        state: { 
+          from: location.pathname,
+          specialist 
+        } 
+      });
+      return;
+    }
+
     navigate('/prenota', { 
       state: { 
         specialist,
