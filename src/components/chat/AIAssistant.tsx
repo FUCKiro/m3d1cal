@@ -13,20 +13,28 @@ export default function AIAssistant() {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     if (!config.openRouter.apiKey) {
       setMessages([{ 
         role: 'assistant', 
-        content: 'Mi dispiace, il servizio di chat AI non è al momento disponibile.'
+        content: 'Mi dispiace, il servizio di chat non è al momento disponibile. Per assistenza, contatta il nostro staff.'
       }]);
+      setInitialized(true);
       return;
     }
     
-    setMessages([{
-      role: 'assistant',
-      content: 'Ciao! Sono l\'assistente virtuale del Centro Medico Plus. Come posso aiutarti?'
-    }]);
+    const initialMessages: Message[] = [
+      {
+        role: 'assistant',
+        content: 'Ciao! Sono l\'assistente virtuale del Centro Medico Plus. Come posso aiutarti oggi?'
+      }
+    ];
+    
+    setMessages(initialMessages);
+    setInitialized(true);
   }, []);
 
   const scrollToBottom = () => {
@@ -40,59 +48,76 @@ export default function AIAssistant() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || loading) return;
+    setError(null);
 
     const userMessage = message;
     setMessage('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    const systemMessage = {
+      role: 'system',
+      content: config.openRouter.systemPrompt
+    };
+    
+    // Add user message to chat
+    const updatedMessages = [...messages, { role: 'user', content: userMessage }];
+    setMessages(updatedMessages);
     setLoading(true);
 
     try {
-      // Verifica API key
       if (!config.openRouter.apiKey || config.openRouter.apiKey.trim() === '') {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: 'Mi dispiace, il servizio di chat AI non è configurato correttamente.'
-        }]);
+        setError('Servizio chat non disponibile');
         setLoading(false);
         return;
       }
+
+      const messagesToSend = [systemMessage, ...updatedMessages];
 
       const res = await fetch(config.openRouter.url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${config.openRouter.apiKey}`,
-          'HTTP-Referer': window.location.origin
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Centro Medico Plus Chat'
         },
         body: JSON.stringify({
-          model: "mistral/mistral-7b-instruct",
-          messages: messages.concat([{ role: "user", content: userMessage }])
+          model: "mistralai/mistral-7b-instruct",
+          messages: messagesToSend,
+          temperature: 0.7,
+          max_tokens: 1000,
+          top_p: 0.9,
+          frequency_penalty: 0.5,
+          stream: false
         })
       });
 
       if (!res.ok) {
-        throw new Error(`API error: ${res.status}`);
+        const errorData = await res.json();
+        console.error('OpenRouter API error:', errorData);
+        throw new Error(errorData.error?.message || 'Errore di comunicazione con il servizio AI. Riprova più tardi.');
       }
 
       const data = await res.json();
+      console.log('OpenRouter response:', data);
+      
       if (!data.choices?.[0]?.message?.content) {
-        throw new Error('Invalid response from AI service');
+        throw new Error('Risposta non valida dal servizio AI. Riprova più tardi.');
       }
       
-      setMessages(prev => [...prev, { 
+      setMessages([...updatedMessages, { 
         role: 'assistant', 
-        content: data.choices[0].message.content 
+        content: data.choices[0].message.content.trim()
       }]);
     } catch (error) {
       console.error('Error calling AI:', error);
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Mi dispiace, si è verificato un errore di comunicazione con il servizio AI. Riprova più tardi.'
-      }]);
+      setError('Mi dispiace, si è verificato un errore. Riprova tra qualche istante.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (!initialized) {
+    return null;
+  }
 
   if (!isOpen) {
     return (
@@ -120,6 +145,7 @@ export default function AIAssistant() {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[300px] max-h-[400px]">
         {messages.map((msg, index) => (
+          msg.role !== 'system' && (
           <div
             key={index}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -134,6 +160,7 @@ export default function AIAssistant() {
               <p className="text-sm">{msg.content}</p>
             </div>
           </div>
+          )
         ))}
         {loading && (
           <div className="flex justify-start">
@@ -144,6 +171,12 @@ export default function AIAssistant() {
         )}
         <div ref={messagesEndRef} />
       </div>
+      
+      {error && (
+        <div className="px-4 py-2 bg-red-50 border-t border-red-100">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="p-4 border-t">
         <div className="flex space-x-2">
@@ -152,11 +185,12 @@ export default function AIAssistant() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Scrivi un messaggio..."
-            className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500"
+            className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 disabled:bg-gray-100"
+            disabled={!config.openRouter.apiKey || loading}
           />
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !config.openRouter.apiKey}
             className="bg-rose-600 text-white p-2 rounded-md hover:bg-rose-700 disabled:opacity-50"
           >
             <Send className="h-5 w-5" />

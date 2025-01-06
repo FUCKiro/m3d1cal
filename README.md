@@ -4,50 +4,57 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
 
 ## 🌟 Caratteristiche Principali
 
-- Autenticazione utenti con verifica email
-- Prenotazione appuntamenti in tempo reale
-- Gestione profilo utente e cartella clinica
-- Area amministrativa per gestione dottori e appuntamenti
-- Sistema di notifiche email automatizzate
-- Interfaccia responsive e tema dark/light
-- Supporto multilingua (IT)
+### Per i Pazienti
+- Prenotazione appuntamenti online 24/7
+- Gestione profilo personale e storico visite
+- Notifiche email automatiche per appuntamenti
+- Chat AI per assistenza immediata
+- Visualizzazione disponibilità medici in tempo reale
+- Gestione documenti e referti medici
+
+### Per i Medici
+- Calendario appuntamenti personalizzato
+- Gestione disponibilità e orari
+- Accesso a cartelle cliniche dei pazienti
+- Sistema di notifiche integrato
+- Gestione note e follow-up
+
+### Per gli Amministratori
+- Dashboard completa con statistiche
+- Gestione completa di medici e pazienti
+- Sistema di reportistica avanzato
+- Esportazione dati in CSV
+- Monitoraggio performance
 
 ## 🛠️ Stack Tecnologico
 
 ### Frontend
-- **React 18** - Framework UI
-- **TypeScript** - Tipizzazione statica
-- **Vite** - Build tool e dev server
-- **React Router** - Routing e navigazione
-- **React Hook Form** - Gestione form
-- **Zod** - Validazione dati
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icone
-- **date-fns** - Gestione date
+- **React 18** con TypeScript
+- **Vite** per build e development
+- **TailwindCSS** per styling responsive
+- **React Router** per navigazione
+- **React Hook Form** + Zod per form e validazione
+- **Lucide React** per icone
+- **date-fns** per gestione date
 
 ### Backend e Database
 - **Firebase**
-  - Authentication - Gestione utenti
-  - Firestore - Database NoSQL
-  - Cloud Functions - Logica serverless
-  - Hosting - Deployment
+  - Authentication per gestione utenti
+  - Firestore per database in tempo reale
+  - Cloud Functions per logica serverless
+  - Hosting per deployment
 
-### Email e Notifiche
-- **Resend** - Servizio di invio email
-
-### CI/CD e Tooling
-- **ESLint** - Linting
-- **TypeScript-ESLint** - Linting TypeScript
-- **Prettier** - Code formatting
-- **PostCSS** - CSS processing
-- **Autoprefixer** - CSS compatibility
+### Integrazioni
+- **OpenRouter** per chat AI
+- **Resend** per email transazionali
 
 ## 📋 Prerequisiti
 
-- Node.js (versione 16 o superiore)
+- Node.js (v16+)
 - npm o yarn
 - Account Firebase
-- Account Resend (per email)
+- Account Resend (email)
+- Account OpenRouter (chat AI)
 
 ## ⚙️ Configurazione
 
@@ -62,50 +69,76 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
    npm install
    ```
 
-3. Configura le variabili d'ambiente:
+3. Copia il file di esempio delle variabili d'ambiente:
    ```bash
    cp .env.example .env
    ```
 
-   Richieste le seguenti variabili:
-   - `VITE_FIREBASE_CONFIG` - Configurazione Firebase
-   - `VITE_RESEND_API_KEY` - API key Resend
+4. Configura le variabili d'ambiente nel file `.env`:
+   - Firebase config
+   - Resend API key
+   - OpenRouter API key
 
-4. Avvia il server di sviluppo:
+5. Avvia il server di sviluppo:
    ```bash
    npm run dev
    ```
 
 ## 🔒 Sicurezza
 
-- Autenticazione utenti con email verification
-- Regole di sicurezza Firestore
+- Autenticazione utenti con verifica email
+- Row Level Security su Firestore
 - Protezione delle rotte sensibili
 - Sanitizzazione input utente
 - Rate limiting su API
 - Crittografia dati sensibili
 
-## 📧 Sistema Email
+## 📱 Features Mobile
 
-Il sistema utilizza Resend come provider di email:
-- Notifiche automatiche per appuntamenti
-- Email di verifica account
-- Recupero password
-- Template HTML personalizzati
+- Design responsive
+- PWA ready
+- Tema dark/light
+- Notifiche push
+- Offline support
 
-## 🗄️ Database
+## 🚀 Deployment
 
-### Firestore
-- Dati real-time
-- Cache offline
-- Sincronizzazione automatica
-- Backup automatici
-- Indici ottimizzati
+1. Build del progetto:
+   ```bash
+   npm run build
+   ```
 
-## 📝 Licenza
+2. Deploy su Firebase:
+   ```bash
+   firebase deploy
+   ```
+
+## 🧪 Testing
+
+```bash
+npm run test
+```
+
+## 📖 Documentazione API
+
+La documentazione dettagliata delle API è disponibile nella cartella `/docs`.
+
+## 🤝 Contributing
+
+1. Fork il repository
+2. Crea un branch (`git checkout -b feature/amazing`)
+3. Commit i cambiamenti (`git commit -m 'Add amazing feature'`)
+4. Push al branch (`git push origin feature/amazing`)
+5. Apri una Pull Request
+
+## 📄 License
 
 MIT
 
 ## 👥 Autori
 
 - Fabio La Rocca - Sviluppatore principale
+
+## 🙏 Ringraziamenti
+
+Un ringraziamento speciale a tutti i contributori che hanno reso possibile questo progetto.
