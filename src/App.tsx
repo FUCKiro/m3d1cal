@@ -20,6 +20,7 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import RequireAdmin from './components/auth/RequireAdmin';
 import TermsPage from './pages/TermsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import AIAssistant from './components/chat/AIAssistant';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
         </Routes>
         <Footer />
           <ConnectionStatus />
+          <AIAssistant />
         </div>
         </Router>
       </AuthProvider>

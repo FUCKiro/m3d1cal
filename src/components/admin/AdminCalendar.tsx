@@ -85,9 +85,9 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
           return (
             <div
               key={date.toString()}
-              className={`min-h-24 border rounded-lg p-2 bg-white dark:bg-gray-800 overflow-hidden ${
+              className={`min-h-[5.5rem] sm:min-h-24 border rounded-lg p-2 bg-white dark:bg-gray-800 ${
                 isSelected ? 'border-rose-500' : 'border-gray-200 dark:border-gray-700'
-              }`}
+              } overflow-hidden`}
               onClick={() => setSelectedDate(date)}
             >
               <div className="text-right">
@@ -99,9 +99,12 @@ export default function AdminCalendar({ appointments, onStatusUpdate }: AdminCal
                 {dayAppointments.map(appointment => (
                   <div
                     key={appointment.id}
-                    className={`text-xs p-1 rounded truncate ${getStatusColor(appointment.status)}`}
+                    className={`text-xs p-1 rounded flex items-center justify-between ${getStatusColor(appointment.status)}`}
                   >
-                    <span className="inline-block">{appointment.time}</span>
+                    <span className="whitespace-nowrap min-w-[40px]">{appointment.time}</span>
+                    <span className="truncate ml-1 text-[10px]">
+                      {appointment.patient.lastName}
+                    </span>
                   </div>
                 ))}
                 {dayAppointments.length > 2 && (
