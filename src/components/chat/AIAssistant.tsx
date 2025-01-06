@@ -25,6 +25,14 @@ export default function AIAssistant() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || loading) return;
+    
+    if (!config.deepseek.apiKey) {
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Mi dispiace, il servizio di chat AI non è al momento disponibile.' 
+      }]);
+      return;
+    }
 
     const userMessage = message;
     setMessage('');
@@ -45,6 +53,10 @@ export default function AIAssistant() {
       });
 
       const data = await res.json();
+      if (!data.choices?.[0]?.message?.content) {
+        throw new Error('Invalid response from AI service');
+      }
+      
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: data.choices[0].message.content 
