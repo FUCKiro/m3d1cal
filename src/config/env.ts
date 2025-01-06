@@ -3,8 +3,9 @@ interface Config {
     apiKey: string;
     fromEmail: string;
   };
-  deepseek: {
+  openRouter: {
     apiKey: string;
+    url: string;
   };
 }
 
@@ -13,8 +14,9 @@ export const config: Config = {
     apiKey: import.meta.env.VITE_RESEND_API_KEY || '',
     fromEmail: 'onboarding@resend.dev'
   },
-  deepseek: {
-    apiKey: import.meta.env.VITE_DEEPSEEK_API_KEY || ''
+  openRouter: {
+    apiKey: import.meta.env.VITE_OPENROUTER_API_KEY || '',
+    url: 'https://openrouter.ai/api/v1/chat/completions'
   }
 };
 
@@ -22,6 +24,6 @@ export const config: Config = {
 if (!config.resend.apiKey) {
   console.warn('Missing VITE_RESEND_API_KEY environment variable - email features will be disabled');
 }
-if (!config.deepseek.apiKey) {
-  console.warn('Missing VITE_DEEPSEEK_API_KEY environment variable - AI features will be disabled');
+if (!config.openRouter.apiKey) {
+  console.warn('Missing VITE_OPENROUTER_API_KEY environment variable - AI features will be disabled');
 }

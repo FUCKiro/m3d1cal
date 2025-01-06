@@ -14,6 +14,21 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (!config.openRouter.apiKey) {
+      setMessages([{ 
+        role: 'assistant', 
+        content: 'Mi dispiace, il servizio di chat AI non è al momento disponibile.'
+      }]);
+      return;
+    }
+    
+    setMessages([{
+      role: 'assistant',
+      content: 'Ciao! Sono l\'assistente virtuale del Centro Medico Plus. Come posso aiutarti?'
+    }]);
+  }, []);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -25,14 +40,6 @@ export default function AIAssistant() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || loading) return;
-    
-    if (!config.deepseek.apiKey) {
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Mi dispiace, il servizio di chat AI non è al momento disponibile.' 
-      }]);
-      return;
-    }
 
     const userMessage = message;
     setMessage('');
@@ -40,17 +47,32 @@ export default function AIAssistant() {
     setLoading(true);
 
     try {
-      const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      // Verifica API key
+      if (!config.openRouter.apiKey || config.openRouter.apiKey.trim() === '') {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'Mi dispiace, il servizio di chat AI non è configurato correttamente.'
+        }]);
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch(config.openRouter.url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.deepseek.apiKey}`
+          'Authorization': `Bearer ${config.openRouter.apiKey}`,
+          'HTTP-Referer': window.location.origin
         },
         body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [{ role: "user", content: userMessage }]
+          model: "mistral/mistral-7b-instruct",
+          messages: messages.concat([{ role: "user", content: userMessage }])
         })
       });
+
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
 
       const data = await res.json();
       if (!data.choices?.[0]?.message?.content) {
@@ -65,7 +87,7 @@ export default function AIAssistant() {
       console.error('Error calling AI:', error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: 'Mi dispiace, si è verificato un errore. Riprova più tardi.' 
+        content: 'Mi dispiace, si è verificato un errore di comunicazione con il servizio AI. Riprova più tardi.'
       }]);
     } finally {
       setLoading(false);
