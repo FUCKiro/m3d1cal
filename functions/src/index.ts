@@ -82,7 +82,7 @@ export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours
 
     try {
       await resend.emails.send({
-        from: 'noreply@centromedicoplus.it',
+        from: 'noreplay@medical-demo-app.xyz',
         to: userData.email,
         subject: 'Promemoria Appuntamento - Centro Medico Plus',
         html: `
@@ -100,7 +100,25 @@ export const sendAppointmentReminders = functions.pubsub.schedule('every 1 hours
           <p>Cordiali saluti,<br>Centro Medico Plus</p>
         `
       });
-
+      await resend.emails.send({
+        from: 'noreplay@medical-demo-app.xyz',
+        to: userData.email,
+        subject: 'Promemoria Appuntamento - Centro Medico Plus',
+        html: `
+          <h2>Promemoria Appuntamento</h2>
+          <p>Gentile ${userData.firstName} ${userData.lastName},</p>
+          <p>Le ricordiamo che ha un appuntamento programmato per domani:</p>
+          <ul>
+            <li>Data: ${format(new Date(appointmentData.date), 'EEEE d MMMM yyyy', { locale: it })}</li>
+            <li>Ora: ${appointmentData.time}</li>
+            <li>Dottore: Dr. ${appointmentData.doctorName}</li>
+            <li>Specializzazione: ${appointmentData.specialization}</li>
+            <li>Ubicazione: ${appointmentData.location}</li>
+          </ul>
+          <p>In caso di impossibilità a presentarsi, la preghiamo di cancellare l'appuntamento con almeno 24 ore di anticipo.</p>
+          <p>Cordiali saluti,<br>Centro Medico Plus</p>
+        `
+      });
       console.log(`Reminder email sent successfully to ${userData.email} for appointment ${reminder.appointmentId}`);
       await doc.ref.update({ sent: true });
     } catch (error) {

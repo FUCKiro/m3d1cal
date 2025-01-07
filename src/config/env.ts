@@ -1,7 +1,8 @@
 interface Config {
-  resend: {
-    apiKey: string;
-    fromEmail: string;
+  emailjs: {
+    serviceId: string;
+    templateId: string;
+    publicKey: string;
   };
   openRouter: {
     apiKey: string;
@@ -10,9 +11,10 @@ interface Config {
 }
 
 export const config: Config = {
-  resend: {
-    apiKey: import.meta.env.VITE_RESEND_API_KEY || '',
-    fromEmail: 'onboarding@resend.dev'
+  emailjs: {
+    serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || '',
+    templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '',
+    publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || ''
   },
   openRouter: {
     apiKey: import.meta.env.VITE_OPENROUTER_API_KEY || '',
@@ -22,8 +24,8 @@ export const config: Config = {
 };
 
 // Log configuration status (but not the actual values)
-if (!config.resend.apiKey) {
-  console.warn('Missing VITE_RESEND_API_KEY environment variable - email features will be disabled');
+if (!config.emailjs.publicKey) {
+  console.warn('Missing EmailJS configuration - email features will be disabled');
 }
 if (!config.openRouter.apiKey) {
   console.warn('Missing OpenRouter API key - AI chat will be disabled');
