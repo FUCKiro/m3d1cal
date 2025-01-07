@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background-color: #e11d48;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    .content {
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0 0 8px 8px;
+    }
+    .details {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border: 1px solid #e5e7eb;
+    }
+    .details-item {
+      margin: 10px 0;
+      padding: 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .details-item:last-child {
+      border-bottom: none;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #666;
+      margin-top: 20px;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #e11d48;
+      color: white !important;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .button:hover {
+      background-color: #be123c;
+    }
+    .contact-info {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 style="margin: 0;">Promemoria Appuntamento</h1>
+  </div>
+  
+  <div class="content">
+    <p>Gentile {{to_name}},</p>
+    
+    <p>Le ricordiamo che ha un appuntamento programmato per domani presso il Centro Medico Plus.</p>
+    
+    <div class="details">
+      <div class="details-item">
+        <strong>📅 Data:</strong> {{appointment_date}}
+      </div>
+      <div class="details-item">
+        <strong>⏰ Ora:</strong> {{appointment_time}}
+      </div>
+      <div class="details-item">
+        <strong>👨‍⚕️ Dottore:</strong> Dr. {{doctor_name}}
+      </div>
+      <div class="details-item">
+        <strong>🏥 Specializzazione:</strong> {{specialization}}
+      </div>
+      <div class="details-item">
+        <strong>📍 Ubicazione:</strong> {{location}}
+      </div>
+    </div>
+    
+    <p><strong>Importante:</strong> In caso di impossibilità a presentarsi, la preghiamo di cancellare l'appuntamento con almeno 24 ore di anticipo.</p>
+    
+    <div class="contact-info">
+      <p><strong>Per qualsiasi necessità:</strong></p>
+      <p>☎️ Telefono: +39 06 1234567</p>
+      <p>📧 Email: info@centromedicoplus.it</p>
+    </div>
+    
+    <div style="text-align: center;">
+      <a href="https://centromedicoplus.it/profilo" class="button">
+        Gestisci Appuntamento
+      </a>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>Cordiali saluti,<br><strong>Centro Medico Plus</strong></p>
+    <p>Via Roma 123, 00100 Roma</p>
+    <p style="font-size: 12px; color: #888;">
+      Questa email è stata inviata automaticamente. Per favore non rispondere a questo indirizzo.
+    </p>
+  </div>
+</body>
+</html>
