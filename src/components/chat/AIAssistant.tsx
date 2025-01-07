@@ -14,7 +14,25 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [messageCount, setMessageCount] = useState(0);
+  const MAX_MESSAGES = 10; // Limite giornaliero di messaggi
   const [initialized, setInitialized] = useState(false);
+  
+  // Recupera e imposta il conteggio dei messaggi dal localStorage
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const stored = localStorage.getItem('chatMessageCount');
+    if (stored) {
+      const { count, date } = JSON.parse(stored);
+      if (date === today) {
+        setMessageCount(count);
+      } else {
+        // Reset per nuovo giorno
+        setMessageCount(0);
+        localStorage.setItem('chatMessageCount', JSON.stringify({ count: 0, date: today }));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!config.openRouter.apiKey) {
@@ -48,6 +66,13 @@ export default function AIAssistant() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || loading) return;
+    
+    // Verifica limite messaggi
+    if (messageCount >= MAX_MESSAGES) {
+      setError('Hai raggiunto il limite giornaliero di messaggi. Riprova domani.');
+      return;
+    }
+    
     setError(null);
 
     const userMessage = message;
@@ -98,6 +123,14 @@ export default function AIAssistant() {
 
       const data = await res.json();
       console.log('OpenRouter response:', data);
+      
+      // Aggiorna conteggio messaggi
+      const newCount = messageCount + 1;
+      setMessageCount(newCount);
+      localStorage.setItem('chatMessageCount', JSON.stringify({
+        count: newCount,
+        date: new Date().toDateString()
+      }));
       
       if (!data.choices?.[0]?.message?.content) {
         throw new Error('Risposta non valida dal servizio AI. Riprova più tardi.');
@@ -179,18 +212,24 @@ export default function AIAssistant() {
       )}
 
       <form onSubmit={handleSubmit} className="p-4 border-t">
+        <div className="mb-2 text-xs text-gray-500 flex justify-between">
+          <span>Messaggi rimanenti oggi: {MAX_MESSAGES - messageCount}</span>
+          {messageCount >= MAX_MESSAGES && (
+            <span className="text-red-500">Limite raggiunto</span>
+          )}
+        </div>
         <div className="flex space-x-2">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Scrivi un messaggio..."
-            className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 disabled:bg-gray-100"
-            disabled={!config.openRouter.apiKey || loading}
+            className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 disabled:bg-gray-100" 
+            disabled={!config.openRouter.apiKey || loading || messageCount >= MAX_MESSAGES}
           />
           <button
             type="submit"
-            disabled={loading || !config.openRouter.apiKey}
+            disabled={loading || !config.openRouter.apiKey || messageCount >= MAX_MESSAGES}
             className="bg-rose-600 text-white p-2 rounded-md hover:bg-rose-700 disabled:opacity-50"
           >
             <Send className="h-5 w-5" />

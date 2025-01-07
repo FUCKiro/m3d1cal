@@ -60,7 +60,10 @@ export default function Hero() {
           </div>
           
           <div className="mt-20 text-center">
-            <h2 className="text-3xl font-bold text-gray-900">Perché Scegliere Noi</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Perché Scegliere Noi</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Scopri i vantaggi di affidarti al nostro centro medico per la tua salute
+            </p>
             <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 px-4 sm:px-6 lg:px-8">
               <WhyUsCard
                 icon={<Star className="h-8 w-8 text-yellow-400" />}
@@ -106,12 +109,12 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
 
 function WhyUsCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-700">
       <div className="flex justify-center mb-4">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+      <p className="text-gray-600 dark:text-gray-300">{description}</p>
     </div>
   );
 }
