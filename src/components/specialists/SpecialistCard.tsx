@@ -16,50 +16,6 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   const { user } = useAuth();
   const { adminBooking, patient } = location.state || {};
 
-  const handleCreateDoctor = async () => {
-    try {
-      const doctorRef = doc(collection(db, 'users'));
-      // First create the user document
-      await setDoc(doctorRef, {
-        firstName: specialist.firstName,
-        lastName: specialist.lastName,
-        email: `${specialist.firstName.toLowerCase()}.${specialist.lastName.toLowerCase()}@centromedicoplus.it`,
-        specialization: specialist.specialization,
-        description: specialist.description,
-        yearsOfExperience: specialist.yearsOfExperience,
-        languages: specialist.languages || ['Italiano'],
-        isAvailable: specialist.isAvailable,
-        role: 'doctor',
-        createdAt: new Date()
-      });
-      
-      // Then create the doctor schedule document
-      const scheduleRef = doc(db, 'doctorSchedules', doctorRef.id);
-      await setDoc(scheduleRef, {
-        monday: [],
-        tuesday: [],
-        wednesday: [],
-        thursday: [],
-        friday: [],
-        saturday: []
-      });
-
-      // Show success message
-      const successMessage = document.createElement('div');
-      successMessage.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-      successMessage.textContent = 'Dottore creato con successo';
-      document.body.appendChild(successMessage);
-      setTimeout(() => successMessage.remove(), 3000);
-    } catch (error) {
-      console.error('Error creating doctor:', error);
-      const errorMessage = document.createElement('div');
-      errorMessage.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-      errorMessage.textContent = 'Errore durante la creazione del dottore';
-      document.body.appendChild(errorMessage);
-      setTimeout(() => errorMessage.remove(), 3000);
-    }
-  };
-
   const handleBooking = () => {
     if (!adminBooking && !user) {
       navigate('/login', { 
@@ -80,7 +36,7 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
     });
   };
 
-  return (
+  return specialist ? (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col">
       <div className="relative">
         <img
@@ -127,18 +83,8 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
             <Calendar className="w-4 h-4 mr-2" />
             Prenota Visita
           </button>
-          
-          {user?.role === 'admin' && (
-            <button
-              onClick={handleCreateDoctor}
-              className="w-full bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              Crea Account Dottore
-            </button>
-          )}
         </div>
       </div>
     </div>
-  );
+  ) : null;
 }
