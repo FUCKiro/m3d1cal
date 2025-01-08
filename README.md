@@ -1,114 +1,128 @@
 # Centro Medico Plus
 
-Un'applicazione web moderna per la gestione di un centro medico, costruita con React, TypeScript e un'architettura cloud-first.
+A modern medical center management system built with React, TypeScript, and Firebase.
 
-## 🌟 Caratteristiche Principali
+## 🚀 Features
 
-### Per i Pazienti
-- Prenotazione appuntamenti online 24/7
-- Gestione profilo personale e storico visite
-- Notifiche email automatiche per appuntamenti
-- Chat AI per assistenza immediata
-- Visualizzazione disponibilità medici in tempo reale
-- Gestione documenti e referti medici
+### For Patients
+- 24/7 online appointment booking
+- Personal profile and visit history management 
+- Automated email appointment reminders
+- AI-powered chat assistance
+- Real-time doctor availability
+- Medical document management
 
-### Per i Medici
-- Calendario appuntamenti personalizzato
-- Gestione disponibilità e orari
-- Accesso a cartelle cliniche dei pazienti
-- Sistema di notifiche integrato
-- Gestione note e follow-up
+### For Doctors
+- Customized appointment calendar
+- Availability and schedule management
+- Patient medical records access
+- Integrated notification system
+- Notes and follow-up management
 
-### Per gli Amministratori
-- Dashboard completa con statistiche
-- Gestione completa di medici e pazienti
-- Sistema di reportistica avanzato
-- Esportazione dati in CSV
-- Monitoraggio performance
+### For Administrators
+- Complete dashboard with statistics
+- Full doctor and patient management
+- Advanced reporting system
+- CSV data export
+- Performance monitoring
 
-## 🛠️ Stack Tecnologico
+## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18** con TypeScript
-- **Vite** per build e development
-- **TailwindCSS** per styling responsive
-- **React Router** per navigazione
-- **React Hook Form** + Zod per form e validazione
-- **Lucide React** per icone
-- **date-fns** per gestione date
+- React 18 with TypeScript
+- Vite for build and development
+- TailwindCSS for responsive styling
+- React Router for navigation
+- React Hook Form + Zod for form validation
+- Lucide React for icons
+- date-fns for date handling
 
-### Backend e Database
-- **Firebase**
-  - Authentication per gestione utenti
-  - Firestore per database in tempo reale
-  - Cloud Functions per logica serverless
-  - Hosting per deployment
+### Backend & Database
+- Firebase
+  - Authentication for user management
+  - Firestore for real-time database
+  - Cloud Functions for serverless logic
+  - Hosting for deployment
 
-### Integrazioni
-- **OpenRouter** per chat AI
-- **Resend** per email transazionali
+### Integrations
+- OpenRouter for AI chat
+- EmailJS for transactional emails
 
-## 📋 Prerequisiti
+## 📋 Prerequisites
 
 - Node.js (v16+)
-- npm o yarn
-- Account Firebase
-- Account Resend (email)
-- Account OpenRouter (chat AI)
+- npm or yarn
+- Firebase account
+- EmailJS account
+- OpenRouter API key
 
-## ⚙️ Configurazione
+## ⚙️ Setup
 
-1. Clona il repository:
+1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/centro-medico-plus.git
    cd centro-medico-plus
    ```
 
-2. Installa le dipendenze:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Copia il file di esempio delle variabili d'ambiente:
+3. Create `.env` file from template:
    ```bash
    cp .env.example .env
    ```
 
-4. Configura le variabili d'ambiente nel file `.env`:
-   - Firebase config
-   - Resend API key
-   - OpenRouter API key
+4. Configure environment variables in `.env`:
+   ```
+   # Firebase Configuration
+   VITE_FIREBASE_API_KEY=your_firebase_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+   VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+   VITE_FIREBASE_APP_ID=your_firebase_app_id
 
-5. Avvia il server di sviluppo:
+   # EmailJS Configuration
+   VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id
+   VITE_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
+   VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
+
+   # AI Chat
+   VITE_OPENROUTER_API_KEY=your_openrouter_api_key
+   ```
+
+5. Start development server:
    ```bash
    npm run dev
    ```
 
-## 🔒 Sicurezza
+## 🔒 Security Features
 
-- Autenticazione utenti con verifica email
-- Row Level Security su Firestore
-- Protezione delle rotte sensibili
-- Sanitizzazione input utente
-- Rate limiting su API
-- Crittografia dati sensibili
+- Email verification for users
+- Row Level Security in Firestore
+- Protected routes
+- Input sanitization
+- API rate limiting
+- Sensitive data encryption
 
-## 📱 Features Mobile
+## 📱 Mobile Features
 
-- Design responsive
+- Responsive design
 - PWA ready
-- Tema dark/light
-- Notifiche push
+- Dark/light theme
+- Push notifications
 - Offline support
 
 ## 🚀 Deployment
 
-1. Build del progetto:
+1. Build the project:
    ```bash
    npm run build
    ```
 
-2. Deploy su Firebase:
+2. Deploy to Firebase:
    ```bash
    firebase deploy
    ```
@@ -119,26 +133,30 @@ Un'applicazione web moderna per la gestione di un centro medico, costruita con R
 npm run test
 ```
 
-## 📖 Documentazione API
+## 📖 API Documentation
 
-La documentazione dettagliata delle API è disponibile nella cartella `/docs`.
+Detailed API documentation is available in the `/docs` directory.
 
 ## 🤝 Contributing
 
-1. Fork il repository
-2. Crea un branch (`git checkout -b feature/amazing`)
-3. Commit i cambiamenti (`git commit -m 'Add amazing feature'`)
-4. Push al branch (`git push origin feature/amazing`)
-5. Apri una Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing`)
+5. Open a Pull Request
 
 ## 📄 License
 
 MIT
 
-## 👥 Autori
+## 👥 Authors
 
-- Fabio La Rocca - Sviluppatore principale
+- Fabio La Rocca - Lead Developer
 
-## 🙏 Ringraziamenti
+## 🙏 Acknowledgments
 
-Un ringraziamento speciale a tutti i contributori che hanno reso possibile questo progetto.
+Special thanks to all contributors who helped make this project possible.
+
+## 📞 Support
+
+For support, email support@centromedicoplus.it or create an issue in the repository.
