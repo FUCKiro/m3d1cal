@@ -25,7 +25,7 @@ service cloud.firestore {
         resource.data.role == 'doctor'
       );
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow update, delete: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
     }
     
     // Appointments collection rules - Simplified for debugging
@@ -38,7 +38,7 @@ service cloud.firestore {
     // Doctor schedules collection rules
     match /doctorSchedules/{doctorId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (
+      allow write, delete: if isAuthenticated() && (
         request.auth.uid == doctorId || 
         isAdmin()
       );
@@ -46,7 +46,7 @@ service cloud.firestore {
 
     // Reminders collection rules
     match /reminders/{reminderId} {
-      allow read, write: if isAuthenticated();
+      allow read, write, delete: if isAuthenticated();
     }
   }
 }
