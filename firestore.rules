@@ -48,5 +48,27 @@ service cloud.firestore {
     match /reminders/{reminderId} {
       allow read, write, delete: if isAuthenticated();
     }
+
+    // Reviews collection rules
+    match /reviews/{reviewId} {
+      // Anyone can read reviews
+      allow read: if true;
+      
+      // Only authenticated users can create reviews
+      allow create: if isAuthenticated() && 
+        // User can only review once per doctor
+        !exists(/databases/$(database)/documents/reviews/$(request.resource.data.doctorId + '_' + request.auth.uid)) &&
+        // Validate review data
+        request.resource.data.patientId == request.auth.uid &&
+        request.resource.data.rating >= 1 && 
+        request.resource.data.rating <= 5 &&
+        request.resource.data.comment is string &&
+        request.resource.data.comment.size() <= 1000 &&
+        request.resource.data.createdAt is string;
+        
+      // Users can only update or delete their own reviews
+      allow update, delete: if isAuthenticated() &&
+        request.auth.uid == resource.data.patientId;
+    }
   }
 }

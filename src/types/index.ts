@@ -47,6 +47,17 @@ export interface Specialist {
   isAvailable: boolean;
 }
 
+export interface Review {
+  id: string;
+  doctorId: string;
+  patientId: string;
+  patientName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  verified: boolean;
+}
+
 export interface DoctorSchedule {
   [key: string]: string[]; // e.g. monday: ['09:00', '09:30', etc]
 }

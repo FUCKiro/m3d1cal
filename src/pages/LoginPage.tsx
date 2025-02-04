@@ -24,14 +24,27 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setError('');
-      const user = await login(data.email, data.password);
-      if (!user.emailVerified) {
-        setError('Per favore verifica la tua email prima di accedere');
-        return;
+      try {
+        const user = await login(data.email, data.password);
+        if (!user.emailVerified) {
+          setError('Per favore verifica la tua email prima di accedere');
+          return;
+        }
+        navigate('/');
+      } catch (error: any) {
+        if (error.code === 'auth/invalid-credential') {
+          setError('Email o password non corretti. Verifica le tue credenziali e riprova.');
+        } else if (error.code === 'auth/user-not-found') {
+          setError('Nessun account trovato con questa email');
+        } else if (error.code === 'auth/wrong-password') {
+          setError('Password non corretta');
+        } else {
+          setError('Si è verificato un errore durante il login. Riprova più tardi.');
+        }
       }
-      navigate('/');
     } catch (error) {
-      setError('Email o password non corretti');
+      console.error('Login error:', error);
+      setError('Si è verificato un errore durante il login. Riprova più tardi.');
     }
   };
 

@@ -1,6 +1,8 @@
 export function handleFirebaseError(error: unknown): string {
   if (error instanceof Error) {
     switch (error.message) {
+      case 'auth/invalid-api-key':
+        return 'Errore di configurazione. Contatta il supporto tecnico.';
       case 'auth/email-already-in-use':
         return 'Questa email è già registrata';
       case 'auth/invalid-email':

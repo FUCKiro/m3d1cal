@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, UserPlus } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { doc, setDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import type { Specialist } from '../../types';
+import DoctorReviews from './DoctorReviews';
 
 interface SpecialistCardProps {
   specialist: Specialist;
@@ -13,6 +14,7 @@ interface SpecialistCardProps {
 export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showReviews, setShowReviews] = useState(false);
   const { user } = useAuth();
   const { adminBooking, patient } = location.state || {};
 
@@ -84,6 +86,14 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
             Prenota Visita
           </button>
         </div>
+        
+        <button
+          onClick={() => setShowReviews(!showReviews)}
+          className="mt-2 w-full text-gray-600 dark:text-gray-300 text-sm hover:text-gray-900 dark:hover:text-white"
+        >
+          {showReviews ? 'Nascondi recensioni' : 'Mostra recensioni'}
+        </button>
+        {showReviews && <DoctorReviews doctorId={specialist.id} doctorName={`${specialist.firstName} ${specialist.lastName}`} />}
       </div>
     </div>
   ) : null;
