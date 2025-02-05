@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, AlertCircle } from 'lucide-react';
 import SpecialistCard from '../components/specialists/SpecialistCard';
+import SpecialistCardSkeleton from '../components/specialists/SpecialistCardSkeleton';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { User } from '../types';
@@ -62,8 +63,14 @@ export default function SpecialistsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600" />
+      <div className="bg-gray-50 dark:bg-gray-900 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, index) => (
+              <SpecialistCardSkeleton key={index} />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -116,7 +123,7 @@ export default function SpecialistsPage() {
         )}
 
         <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredDoctors.map((doctor) => (
+          {filteredDoctors.map((doctor, index) => (
             <SpecialistCard 
               key={doctor.id} 
               specialist={{

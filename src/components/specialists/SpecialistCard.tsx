@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Calendar, UserPlus } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -39,7 +40,13 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
   };
 
   return specialist ? (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ y: -5 }}
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col"
+    >
       <div className="relative">
         <img
           src={specialist.imageUrl}
@@ -95,6 +102,6 @@ export default function SpecialistCard({ specialist }: SpecialistCardProps) {
         </button>
         {showReviews && <DoctorReviews doctorId={specialist.id} doctorName={`${specialist.firstName} ${specialist.lastName}`} />}
       </div>
-    </div>
+    </motion.div>
   ) : null;
 }

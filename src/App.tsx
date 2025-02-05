@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { TourProvider } from './contexts/TourContext';
+import { AnimatePresence } from 'framer-motion';
+import PageTransition from './components/common/PageTransition';
 import Header from './components/layout/Header';
 import ConnectionStatus from './components/layout/ConnectionStatus';
 import Footer from './components/layout/Footer';
@@ -26,30 +29,34 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
-        <Header />
-        <Routes>
-          <Route path="/" element={<Hero />} />
-          <Route path="/servizi" element={<ServicesPage />} />
-          <Route path="/specialisti" element={<SpecialistsPage />} />
-          <Route path="/contatti" element={<ContactPage />} />
-          <Route path="/registrati" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/profilo" element={<ProfilePage />} />
-          <Route path="/recupera-password" element={<ResetPasswordPage />} />
-          <Route path="/prenota" element={<BookingPage />} />
-          <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>} />
-          <Route path="/verifica-email" element={<EmailVerificationPage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/termini" element={<TermsPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-        <Footer />
-          <ConnectionStatus />
-          <AIAssistant />
-        </div>
-        </Router>
+        <TourProvider>
+          <Router>
+            <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+              <Header />
+              <AnimatePresence mode="wait">
+                <Routes>
+                  <Route path="/" element={<PageTransition><Hero /></PageTransition>} />
+                  <Route path="/servizi" element={<PageTransition><ServicesPage /></PageTransition>} />
+                  <Route path="/specialisti" element={<PageTransition><SpecialistsPage /></PageTransition>} />
+                  <Route path="/contatti" element={<PageTransition><ContactPage /></PageTransition>} />
+                  <Route path="/registrati" element={<PageTransition><RegisterPage /></PageTransition>} />
+                  <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
+                  <Route path="/profilo" element={<PageTransition><ProfilePage /></PageTransition>} />
+                  <Route path="/recupera-password" element={<PageTransition><ResetPasswordPage /></PageTransition>} />
+                  <Route path="/prenota" element={<PageTransition><BookingPage /></PageTransition>} />
+                  <Route path="/admin" element={<PageTransition><RequireAdmin><AdminPage /></RequireAdmin></PageTransition>} />
+                  <Route path="/verifica-email" element={<PageTransition><EmailVerificationPage /></PageTransition>} />
+                  <Route path="/privacy" element={<PageTransition><PrivacyPolicyPage /></PageTransition>} />
+                  <Route path="/termini" element={<PageTransition><TermsPage /></PageTransition>} />
+                  <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />
+                </Routes>
+              </AnimatePresence>
+              <Footer />
+              <ConnectionStatus />
+              <AIAssistant />
+            </div>
+          </Router>
+        </TourProvider>
       </AuthProvider>
     </ThemeProvider>
   );
