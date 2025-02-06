@@ -48,7 +48,7 @@ export default function Header() {
             <Link to="/servizi" className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">
               Servizi
             </Link>
-            <Link to="/specialisti" className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+            <Link to="/specialisti" data-tour="nav-specialists" className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">
               Specialisti
             </Link>
             <Link to="/contatti" className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">
@@ -58,6 +58,7 @@ export default function Header() {
               <>
                 <Link
                   to="/profilo"
+                  data-tour="nav-profile"
                   className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium"
                 >
                   Profilo
@@ -95,7 +96,11 @@ export default function Header() {
                 </Link>
               </>
             )}
-            <Link to="/specialisti" className="bg-rose-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
+            <Link 
+              to="/specialisti" 
+              data-tour="nav-booking"
+              className="bg-rose-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            >
               Prenota Visita
             </Link>
           </div>

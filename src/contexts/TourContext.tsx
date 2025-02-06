@@ -11,28 +11,28 @@ const TourContext = createContext<TourContextType | null>(null);
 const steps: Step[] = [
   {
     target: 'body',
-    content: 'Benvenuto al Centro Medico Plus! Ti guideremo attraverso le principali funzionalità.',
+    content: 'Benvenuto al Centro Medico Plus! Ti guideremo attraverso le principali funzionalità del nostro portale.',
     placement: 'center',
     disableBeacon: true,
   },
   {
-    target: '.specialists-section',
-    content: 'Qui puoi trovare tutti i nostri specialisti e prenotare una visita.',
+    target: '[data-tour="nav-specialists"]',
+    content: 'Qui puoi visualizzare e prenotare visite con i nostri specialisti.',
     placement: 'bottom',
   },
   {
-    target: '.booking-button',
-    content: 'Clicca qui per prenotare una visita con uno specialista.',
+    target: '[data-tour="nav-booking"]',
+    content: 'Usa questo pulsante per prenotare rapidamente una visita.',
     placement: 'bottom',
   },
   {
-    target: '.profile-section',
-    content: 'Nel tuo profilo puoi gestire i tuoi appuntamenti e dati personali.',
+    target: '[data-tour="nav-profile"]',
+    content: 'Accedi al tuo profilo per gestire appuntamenti e dati personali.',
     placement: 'bottom',
   },
   {
-    target: '.ai-assistant',
-    content: 'Il nostro assistente virtuale è sempre disponibile per aiutarti.',
+    target: '[data-tour="ai-assistant"]',
+    content: 'Il nostro assistente virtuale è qui per aiutarti 24/7.',
     placement: 'left',
   },
 ];
@@ -51,7 +51,9 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, index } = data;
     
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
+    
+    if (finishedStatuses.includes(status)) {
       setRun(false);
       localStorage.setItem('hasSeenTour', 'true');
     } else {
@@ -73,21 +75,32 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
       <Joyride
         steps={steps}
         run={run}
+        scrollToFirstStep
         continuous
         showProgress
         showSkipButton
+        spotlightClicks
         stepIndex={stepIndex}
         callback={handleJoyrideCallback}
         styles={{
           options: {
             primaryColor: '#e11d48',
-            textColor: '#374151',
+            backgroundColor: '#ffffff',
+            textColor: '#1f2937',
+            zIndex: 1000,
+          },
+          spotlight: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+          tooltip: {
+            padding: '20px',
+            borderRadius: '8px',
           },
         }}
         locale={{
           back: 'Indietro',
           close: 'Chiudi',
-          last: 'Fine',
+          last: 'Finito',
           next: 'Avanti',
           skip: 'Salta',
         }}

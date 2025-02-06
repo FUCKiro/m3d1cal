@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { TourProvider } from './contexts/TourContext';
@@ -32,6 +33,7 @@ function App() {
         <TourProvider>
           <Router>
             <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+              <ScrollToTop />
               <Header />
               <AnimatePresence mode="wait">
                 <Routes>
@@ -60,6 +62,19 @@ function App() {
       </AuthProvider>
     </ThemeProvider>
   );
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, [pathname]);
+
+  return null;
 }
 
 export default App;
